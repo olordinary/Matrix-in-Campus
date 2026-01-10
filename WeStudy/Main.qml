@@ -16,11 +16,19 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: createRoomPage
+        initialItem: lobbyPage
     }
     
     // 大厅页面
+    Component {
+        id: lobbyPage
+        LobbyPage {
+            onCreateRoom: {
+                stackView.push(createRoomPage)
+            }
 
+        }
+    }
     // 创建自习室页面
     Component {
         id: createRoomPage

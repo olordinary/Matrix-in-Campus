@@ -14,11 +14,19 @@ qt_add_qml_module(appWeStudy
     URI WeStudy
     VERSION 1.0
     SOURCES     main.cpp
-    QML_FILES   Main.qml
+    QML_FILES
+        Main.qml
+        CreateRoomPage.qml
+        LobbyPage.qml
+        StudyRoomPage.qml
+
 )
 
 source_group("QML Files" FILES
     Main.qml
+    CreateRoomPage.qml
+    LobbyPage.qml
+    StudyRoomPage.qml
 )
 
 target_compile_features(appWeStudy PRIVATE cxx_std_23)

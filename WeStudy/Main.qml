@@ -1,29 +1,40 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
 
 ApplicationWindow {
-    width: 640
-    height: 480
+    id: mainWindow
     visible: true
-    title: qsTr("Hello World")
-    menuBar: MenuBar {
-        Menu {
-            title: qsTr("File")
-            MenuItem {
-                text: qsTr("&Open")
-                onTriggered: console.log("Open action triggered");
-            }
-            MenuItem {
-                text: qsTr("Exit")
-                onTriggered: Qt.quit();
+    width: 1280
+    height: 800
+    title: "在线自习室"
+    
+    color: "#f5f7fa"
+
+    
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        initialItem: createRoomPage
+    }
+    
+    // 大厅页面
+
+    // 创建自习室页面
+    Component {
+        id: createRoomPage
+        CreateRoomPage {
+            onBack: {
+                stackView.pop()
             }
         }
     }
+    
+    // 自习室页面
 
-    //Content Area
-    TextArea {
-        text: qsTr("Hello World")
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
+    
+    // 监听房间状态变化
+
+
 }

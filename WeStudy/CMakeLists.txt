@@ -4,7 +4,8 @@ project(WeStudy VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick
+WebSockets)
 
 qt_standard_project_setup(REQUIRES 6.9) #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)
 
@@ -19,6 +20,8 @@ qt_add_qml_module(appWeStudy
         CreateRoomPage.qml
         LobbyPage.qml
         StudyRoomPage.qml
+        SOURCES webrtcManager.h webrtcManager.cpp
+        SOURCES websocketclient.h websocketclient.cpp
 
 )
 
@@ -34,6 +37,7 @@ target_compile_features(appWeStudy PRIVATE cxx_std_23)
 target_link_libraries(appWeStudy
     PRIVATE
         Qt6::Quick
+        Qt6::WebSockets
 )
 
 set_target_properties(appWeStudy PROPERTIES

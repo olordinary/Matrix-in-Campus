@@ -29,12 +29,10 @@ Page {
             Rectangle {
                 width: 80
                 height: 30
-                radius: 15
-                color: roomManager.isOwner ? "#f39c12" : "#3498db"
+                radius: 15          
                 
                 Label {
-                    anchors.centerIn: parent
-                    // text: roomManager.isOwner ? "房主" : "成员"
+                    anchors.centerIn: parent         
                     text:"参与者权限"
                     font.pixelSize: 12
                     color: "white"

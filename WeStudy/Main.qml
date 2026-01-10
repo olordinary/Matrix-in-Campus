@@ -8,7 +8,7 @@ ApplicationWindow {
     visible: true
     width: 1280
     height: 800
-    title: "在线自习室"
+    title: "WeStudy"
     
     color: "#f5f7fa"
 

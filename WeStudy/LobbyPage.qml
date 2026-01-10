@@ -58,7 +58,7 @@ Page{
                 spacing: 15
 
                 Label {
-                    text: "欢迎使用在线自习室"
+                    text: "Welcome to WeStudy"
                     font.pixelSize: 28
                     font.bold: true
                     color: "#2c3e50"

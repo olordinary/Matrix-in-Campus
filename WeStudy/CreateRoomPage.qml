@@ -222,7 +222,7 @@ Page {
                     font.pixelSize: 14
                 }
                 Switch {
-                    id: vedioSwitch
+                    id: videoSwitch
                     text: "摄像头"
                     font.pixelSize: 14
                 }
@@ -283,7 +283,15 @@ Page {
                     }
                     
                     onClicked: {
-                        //todo
+                        controller.createRoom(
+                            roomNameField.text.trim(),
+                            Math.round(maxParticipantsSlider.value),
+                            privateSwitch.checked,
+                            videoSwitch.checked,
+                            audioSwitch.checked,
+                            passwordField.text
+
+                        )
                     }
                 }
             }

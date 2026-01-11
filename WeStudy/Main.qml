@@ -11,7 +11,6 @@ ApplicationWindow {
     title: "WeStudy"
     
     color: "#f5f7fa"
-
     
     StackView {
         id: stackView
@@ -26,6 +25,9 @@ ApplicationWindow {
             onCreateRoom: {
                 stackView.push(createRoomPage)
             }
+            onJoinRoom: function(roomId) {
+               controller.joinRoom(roomId, "")//房间控制器对象来实现
+            }
 
         }
     }
@@ -38,11 +40,48 @@ ApplicationWindow {
             }
         }
     }
-    
+
     // 自习室页面
+    Component {
+        id: studyRoomPage
+        StudyRoomPage {
+        }
+    }
 
-    
-    // 监听房间状态变化
 
 
+      // 监听房间状态变化
+    Connections {
+        target: controller
+
+        function onCurrentRoomChanged() {
+            if (roomManager.isInRoom) {
+                stackView.replace(studyRoomPage)
+            } else {
+                stackView.replace(lobbyPage)
+            }
+        }
+
+        function onErrorOccurred(error) {
+            errorDialog.text = error
+            errorDialog.open()
+        }
+    }
+
+
+    // 错误对话框
+    Dialog {
+        id: errorDialog
+        title: "提示"
+        modal: true
+        anchors.centerIn: parent
+        standardButtons: Dialog.Ok
+
+        property string text: ""
+
+        Label {
+            text: errorDialog.text
+        }
+    }
 }
+

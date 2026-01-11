@@ -1,0 +1,15 @@
+{
+  "name": "studyroom-server",
+  "version": "1.0.0",
+  "description": "在线自习室WebSocket信令服务器",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["websocket", "signaling", "webrtc"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  }
+}

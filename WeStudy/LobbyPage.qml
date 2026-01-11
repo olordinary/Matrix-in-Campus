@@ -1,10 +1,12 @@
 import QtQuick
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 2.15
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Page{
     id:lobby
     signal createRoom()
+    signal joinRoom(string roomId)
+
     header:ToolBar{
         background:Rectangle{
             color:"#3498db"
@@ -27,8 +29,8 @@ Page{
             }
 
             Label {
-                text: "未连接"
-                color: "#e74c3c"
+                text: wsClient.connected ? "已连接" : "未连接"
+                color: wsClient.connected ? "#2ecc71" : "#e74c3c"
                 font.pixelSize: 14
             }
 
@@ -36,7 +38,7 @@ Page{
                 width: 10
                 height: 10
                 radius: 5
-                color:"#e74c3c"
+                color: wsClient.connected ? "#2ecc71" : "#e74c3c"
             }
         }
     }
@@ -119,11 +121,12 @@ Page{
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+                onClicked: wsClient.getRoomList()
 
             }
 
             TextField {
-                id: searchField
+                id: serveripFiled
                 placeholderText: "ws://localhost:9999"
                 placeholderTextColor: "#999999"
                 font.pixelSize: 16
@@ -132,18 +135,24 @@ Page{
 
                 background: Rectangle {
                     color: "white"
-                    border.color: searchField.focus ? "#3498db" : "#bdc3c7"
+                    border.color: serveripFiled.focus ? "#3498db" : "#bdc3c7"
                     border.width: 2
                     radius: 8
                 }
 
+
                 // 文本区域内边距
                 leftPadding: 15
                 rightPadding: 15
+                //验证器
+                validator: RegularExpressionValidator {
+                                   regularExpression: /^(ws:\/\/|wss:\/\/)[^\s]+$/
+                               }
             }
 
             Button{
-                text: "连接服务器"
+                id: connectButton
+                text: wsClient.connected ? "已连接" : "连接服务器"
                 font.pixelSize: 16
                 implicitWidth: 180
                 implicitHeight: 50
@@ -160,6 +169,11 @@ Page{
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+              onClicked: {
+                  if(!wsClient.connected){
+                     connectToServer();
+                  }
+              }
             }
         }
 
@@ -230,8 +244,24 @@ Page{
                             }
                         }
 
-
+                Connections {
+                    target: wsClient
+                    function onRoomListReceived(rooms) {
+                        roomListModel.clear()
+                        for (let i = 0; i < rooms.length; ++i) {
+                            const room = rooms[i]
+                            roomListModel.append({
+                                roomId: room.roomId,
+                                roomName: room.roomName,
+                                currentParticipants: room.currentParticipants,
+                                maxParticipants: room.maxParticipants,
+                                isPrivate: room.isPrivate
+                            })
+                        }
+                    }
+                }
                 Component.onCompleted: {
+                    wsClient.getRoomList()
                 }
 
                 ScrollView {
@@ -288,7 +318,7 @@ Page{
                                         spacing: 10
 
                                         Label {
-                                            text:  "当前人数/总人数"
+                                            text:  model.currentParticipants + "/" + model.maxParticipants + " 人"
                                             font.pixelSize: 14
                                             color: "#7f8c8d"
                                         }
@@ -300,13 +330,13 @@ Page{
                                         }
 
                                         Label {
-                                            text: "公开"
+                                            text: model.isPrivate ? "私密" : "公开"
                                             font.pixelSize: 14
-                                            color: "#27ae60"
+                                            color: model.isPrivate ? "#e74c3c" : "#27ae60"
                                         }
                                     }
                                 }
-
+                                //大厅的加入不需要密码
                                 Button {
                                     text: "加入"
                                     font.pixelSize: 14
@@ -325,6 +355,7 @@ Page{
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
                                     }
+                                onClicked: lobby.joinRoom(model.roomId)
 
                                 }
                             }
@@ -337,4 +368,16 @@ Page{
 
 
     }
+    function connectToServer() {
+            var url = serveripField.text.trim()
+
+            if (url === "") {
+                url = "ws://localhost:8080"
+                serveripField.text = url
+            }
+
+            // 验证URL格式
+            console.log("正在连接服务器:", url)
+            wsClient.connectToServer(url)
+        }
 }

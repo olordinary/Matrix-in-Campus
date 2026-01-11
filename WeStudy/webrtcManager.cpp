@@ -1,10 +1,17 @@
 #include "webrtcManager.h"
-#include"websocketclient.h"
-#include<QDebug>
+#include "websocketclient.h"
+#include <QDebug>
 
 WebRTCManager::WebRTCManager(WebSocketClient *signaling, QObject *parent)
     : QObject(parent)
+    , m_signaling(signaling)
+    , m_audioEnabled(true)
+    , m_videoEnabled(true)
+    , m_mediaStarted(false)
 {
+    // 配置STUN服务器
+    m_config.iceServers.emplace_back("stun:stun.l.google.com:19302");
+
     // 连接信令
     connect(m_signaling, &WebSocketClient::offerReceived,
             this, &WebRTCManager::handleOffer);
@@ -17,6 +24,56 @@ WebRTCManager::WebRTCManager(WebSocketClient *signaling, QObject *parent)
 WebRTCManager::~WebRTCManager()
 {
     closeAllConnections();
+    stopLocalMedia();
+}
+
+void WebRTCManager::startLocalMedia()
+{
+    if (m_mediaStarted) {
+        return;
+    }
+
+    try {
+        // 注意：libdatachannel本身不处理媒体捕获
+        // 这里需要配合其他库（如FFmpeg、GStreamer等）来捕获音视频
+        // 这里只是创建占位符，实际实现需要根据具体需求
+
+        qDebug() << "Local media started";
+        m_mediaStarted = true;
+        emit localStreamReady();
+    }
+    catch (const std::exception &e) {
+        qWarning() << "Failed to start local media:" << e.what();
+        emit errorOccurred(QString("Failed to start local media: %1").arg(e.what()));
+    }
+}
+
+void WebRTCManager::stopLocalMedia()
+{
+    if (!m_mediaStarted) {
+        return;
+    }
+
+    m_localVideoTrack.reset();
+    m_localAudioTrack.reset();
+    m_mediaStarted = false;
+    qDebug() << "Local media stopped";
+}
+
+bool WebRTCManager::toggleAudio()
+{
+    m_audioEnabled = !m_audioEnabled;
+    // TODO: 实际控制音频track的启用/禁用
+    qDebug() << "Audio toggled:" << m_audioEnabled;
+    return m_audioEnabled;
+}
+
+bool WebRTCManager::toggleVideo()
+{
+    m_videoEnabled = !m_videoEnabled;
+    // TODO: 实际控制视频track的启用/禁用
+    qDebug() << "Video toggled:" << m_videoEnabled;
+    return m_videoEnabled;
 }
 
 void WebRTCManager::createPeerConnection(const QString &participantId)
@@ -34,6 +91,8 @@ void WebRTCManager::createPeerConnection(const QString &participantId)
         data.pc = pc;
         m_peerConnections[participantId] = data;
 
+        // 添加本地媒体流
+        addLocalTracksToConnection(pc);
 
         qDebug() << "Creating offer for:" << participantId;
 
@@ -96,6 +155,31 @@ void WebRTCManager::setupPeerConnection(const QString &participantId,
         emit peerConnectionStateChanged(participantId, stateStr);
     });
 
+    // 设置Track回调
+    pc->onTrack([this, participantId](std::shared_ptr<rtc::Track> track) {
+        qDebug() << "Received track from:" << participantId;
+
+        track->onMessage([participantId](rtc::message_variant message) {
+            // 处理接收到的媒体数据
+            if (std::holds_alternative<rtc::binary>(message)) {
+                auto data = std::get<rtc::binary>(message);
+                qDebug() << "Received binary media data from:" << participantId << "size:" << data.size();
+            }
+
+        });
+
+        emit remoteStreamReady(participantId);
+    });
+}
+
+void WebRTCManager::addLocalTracksToConnection(std::shared_ptr<rtc::PeerConnection> pc)
+{
+    if (!m_mediaStarted) {
+        return;
+    }
+
+    // TODO: 添加实际的音视频track
+    // 这里需要配合实际的媒体捕获实现
 }
 
 void WebRTCManager::closePeerConnection(const QString &participantId)
@@ -113,6 +197,17 @@ void WebRTCManager::closePeerConnection(const QString &participantId)
     qDebug() << "Closed peer connection for:" << participantId;
 }
 
+void WebRTCManager::closeAllConnections()
+{
+    for (auto it = m_peerConnections.begin(); it != m_peerConnections.end(); ++it) {
+        if (it->pc) {
+            it->pc->close();
+        }
+    }
+    m_peerConnections.clear();
+    qDebug() << "Closed all peer connections";
+}
+
 void WebRTCManager::handleOffer(const QString &fromId, const QString &sdp)
 {
     qDebug() << "Received offer from:" << fromId;
@@ -126,6 +221,7 @@ void WebRTCManager::handleOffer(const QString &fromId, const QString &sdp)
             data.pc = pc;
             m_peerConnections[fromId] = data;
 
+            addLocalTracksToConnection(pc);
         }
 
         auto &data = m_peerConnections[fromId];

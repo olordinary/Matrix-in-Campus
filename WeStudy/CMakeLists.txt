@@ -3,9 +3,13 @@ cmake_minimum_required(VERSION 4.0.3)
 project(WeStudy VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick
-WebSockets)
+# list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib/cmake/LibDataChannel")
+
+find_package(Qt6 REQUIRED COMPONENTS Quick Core Gui Quick WebSockets)
+find_package(LibDataChannel REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.9) #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)
 
@@ -22,6 +26,9 @@ qt_add_qml_module(appWeStudy
         StudyRoomPage.qml
         SOURCES webrtcManager.h webrtcManager.cpp
         SOURCES websocketclient.h websocketclient.cpp
+        SOURCES controller.h controller.cpp
+        SOURCES studyroom.h studyroom.cpp
+        SOURCES participant.h participant.cpp
 
 )
 
@@ -36,8 +43,12 @@ target_compile_features(appWeStudy PRIVATE cxx_std_23)
 
 target_link_libraries(appWeStudy
     PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Quick
         Qt6::Quick
         Qt6::WebSockets
+        LibDataChannel::LibDataChannel
 )
 
 set_target_properties(appWeStudy PROPERTIES

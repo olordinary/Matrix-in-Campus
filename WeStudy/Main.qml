@@ -55,7 +55,11 @@ ApplicationWindow {
         target: controller
 
         function onCurrentRoomChanged() {
+<<<<<<< HEAD
             if (roomManager.isInRoom) {
+=======
+            if (controller.isInRoom) {
+>>>>>>> bca9fd1 (without mediacapture)
                 stackView.replace(studyRoomPage)
             } else {
                 stackView.replace(lobbyPage)

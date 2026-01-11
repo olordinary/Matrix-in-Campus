@@ -8,7 +8,11 @@ set(CMAKE_AUTORCC ON)
 
 # list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib/cmake/LibDataChannel")
 
+<<<<<<< HEAD
 find_package(Qt6 REQUIRED COMPONENTS Quick Core Gui Quick WebSockets)
+=======
+find_package(Qt6 REQUIRED COMPONENTS Quick Core Gui Quick WebSockets Multimedia)
+>>>>>>> bca9fd1 (without mediacapture)
 find_package(LibDataChannel REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.9) #set(CMAKE_AUTOUIC ON)  set(CMAKE_AUTOMOC ON)
@@ -29,6 +33,10 @@ qt_add_qml_module(appWeStudy
         SOURCES controller.h controller.cpp
         SOURCES studyroom.h studyroom.cpp
         SOURCES participant.h participant.cpp
+<<<<<<< HEAD
+=======
+        SOURCES mediacontroller.h mediacontroller.cpp
+>>>>>>> bca9fd1 (without mediacapture)
 
 )
 
@@ -48,6 +56,10 @@ target_link_libraries(appWeStudy
         Qt6::Quick
         Qt6::Quick
         Qt6::WebSockets
+<<<<<<< HEAD
+=======
+        Qt6::Multimedia
+>>>>>>> bca9fd1 (without mediacapture)
         LibDataChannel::LibDataChannel
 )
 

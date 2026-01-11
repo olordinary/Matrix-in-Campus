@@ -16,13 +16,21 @@ Q_OBJECT//只要改变了属性就一定要发射对应的信号（有些隐士/
     Q_PROPERTY(QQmlListProperty<Participant> participants READ participants NOTIFY participantsChanged)//当这些信号发出时属性绑定的会自动更新
     Q_PROPERTY(bool isInRoom READ isInRoom NOTIFY isInRoomChanged)                                     //显示监听信号
     Q_PROPERTY(bool isOwner READ isOwner NOTIFY isOwnerChanged)                                        //列表绑定model: controller.participants  // 自动监听participantsChanged信号
+<<<<<<< HEAD
 
+=======
+    Q_PROPERTY(bool isStudying READ isStudying NOTIFY isStudyingChanged)
+>>>>>>> bca9fd1 (without mediacapture)
 public:
     explicit Controller(WebSocketClient *client, WebRTCManager *webrtc, QObject *parent = nullptr);
     StudyRoom *currentRoom() const { return m_currentRoom; }//getter
     QQmlListProperty<Participant> participants();//getter
     bool isInRoom() const { return m_currentRoom != nullptr; }//websocket通信是异步过程，A发出请求创建房间，等待服务器响应，会有更对应该的handle函数处理
     bool isOwner() const;
+<<<<<<< HEAD
+=======
+    bool isStudying() const{return m_isStudying;}
+>>>>>>> bca9fd1 (without mediacapture)
     Q_INVOKABLE void createRoom(const QString &roomName,
                                 int maxParticipants,
                                 bool isPrivate,
@@ -30,6 +38,11 @@ public:
                                 bool audioStatus,
                                 const QString &password = " ");
     Q_INVOKABLE void joinRoom(const QString &roomId, const QString &password = "");
+<<<<<<< HEAD
+=======
+    Q_INVOKABLE void startStudying();
+    Q_INVOKABLE void stopStudying();
+>>>>>>> bca9fd1 (without mediacapture)
 
     ~Controller();
 signals:
@@ -38,6 +51,10 @@ signals:
     void isInRoomChanged();
     void isOwnerChanged();
     void participantsChanged();
+<<<<<<< HEAD
+=======
+    void isStudyingChanged();
+>>>>>>> bca9fd1 (without mediacapture)
 
 private slots:
     void handleRoomCreated(const QString &roomId, const QJsonObject &roomInfo);//创建房间后对客户端的改变。更新当前房间的m_currentRoom,更新当前房间的m_participants
@@ -53,5 +70,9 @@ private:
    WebRTCManager *m_webrtc;
    StudyRoom *m_currentRoom;//存储我所有房间信息和参与者等等
    QList<Participant*> m_participants;
+<<<<<<< HEAD
+=======
+   bool m_isStudying;
+>>>>>>> bca9fd1 (without mediacapture)
 
 };

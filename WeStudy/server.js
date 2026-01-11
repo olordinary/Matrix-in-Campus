@@ -33,7 +33,11 @@ wss.on('connection', (ws) => {
                     break;
                     
                 case 'createRoom':
+<<<<<<< HEAD
                     handleCreateRoom(message, userId);
+=======
+                    handleCreateRoom(message, userId);//userID在创建时唯一标识一个用户
+>>>>>>> bca9fd1 (without mediacapture)
                     break;
                     
                 case 'joinRoom':
@@ -132,7 +136,11 @@ wss.on('connection', (ws) => {
     
     function handleJoinRoom(message, userId) {
         const roomId = message.roomId;
+<<<<<<< HEAD
         const room = rooms.get(roomId);
+=======
+        const room = rooms.get(roomId);//在rooms找房间
+>>>>>>> bca9fd1 (without mediacapture)
         
         if (!room) {
             sendToClient(userId, {
@@ -157,7 +165,11 @@ wss.on('connection', (ws) => {
             });
             return;
         }
+<<<<<<< HEAD
         
+=======
+        //添加到房间的成员列表中
+>>>>>>> bca9fd1 (without mediacapture)
         room.participants.set(userId, {
             participantId: userId,
             nickname: '用户' + userId.substring(0, 6),

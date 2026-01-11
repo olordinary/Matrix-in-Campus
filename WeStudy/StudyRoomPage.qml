@@ -1,12 +1,16 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+<<<<<<< HEAD
 
+=======
+import QtMultimedia
+>>>>>>> bca9fd1 (without mediacapture)
 Page {
     id: root
     
     signal leaveRoom()
-    
+
     header: ToolBar {
         background: Rectangle {
             color: "#2c3e50"
@@ -19,8 +23,7 @@ Page {
             spacing: 20
             
             Label {
-
-                text:"RoomName"
+                text:controller.currentRoom?controller.currentRoom.roomName:""
                 font.pixelSize: 20
                 font.bold: true
                 color: "white"
@@ -29,11 +32,12 @@ Page {
             Rectangle {
                 width: 80
                 height: 30
-                radius: 15          
+                radius: 15
+                color:controller.isOwner ? "#f39c12" : "#3498db"
                 
                 Label {
                     anchors.centerIn: parent         
-                    text:"参与者权限"
+                    text:controller.isOwner ? "房主" : "成员"
                     font.pixelSize: 12
                     color: "white"
                 }
@@ -43,21 +47,22 @@ Page {
             
             Label {
 
-                text:"当前人数 ？/MAX人"
+                text:controller.currentRoom ?
+                         controller.currentRoom.currentParticipants + "/" +
+                         controller.currentRoom.maxParticipants + " 人" : ""
                 font.pixelSize: 14
                 color: "white"
             }
             
             Button {
 
-                text:"开始自习"
+                text: controller.isStudying ? "结束自习" : "开始自习"
                 font.pixelSize: 14
                 implicitWidth: 100
                 implicitHeight: 35
                 
-                background: Rectangle {
-
-                    color:"#27ae60"
+                background:  Rectangle {
+                    color: controller.isStudying ? "#e74c3c" : "#27ae60"
                     radius: 6
                 }
                 
@@ -69,12 +74,19 @@ Page {
                     verticalAlignment: Text.AlignVCenter
                 }
                 
+                onClicked: {
+                    if (controller.isStudying) {
+                        controller.stopStudying()
+                    } else {
+                        controller.startStudying()
+                    }
+                }
 
             }
             
             Button {
 
-                text:"离开自习室"
+                text:controller.isOwner ? "关闭自习室" : "离开自习室"
                 font.pixelSize: 14
                 implicitWidth: 120
                 implicitHeight: 35
@@ -94,8 +106,11 @@ Page {
                 }
                 
                 onClicked: {
-                    //todo:如果是房主，提示弹窗
-                    root.leaveRoom()
+                    if (controller.isOwner) {
+                        closeRoomDialog.open()
+                    } else {
+                        root.leaveRoom()
+                    }
                 }
 
             }
@@ -125,7 +140,7 @@ Page {
                     Label {
                         anchors.centerIn: parent
 
-                        text:"参与者（人数）"
+                        text: "自习人数 (" + (controller.currentRoom ?   controller.currentRoom.currentParticipants : 0) + ")"
                         font.pixelSize: 18
                         font.bold: true
                         color: "white"
@@ -136,8 +151,157 @@ Page {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: true
+
+                    ListView {
+                        id: participantListView
+                        model: controller.participants
+                        spacing: 1
+
+                        delegate: Rectangle {
+                            width: participantListView.width
+                            height: 80
+                            color: index % 2 === 0 ? "white" : "#f8f9fa"
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.margins: 15
+                                spacing: 15
+
+                                Rectangle {
+                                    width: 50
+                                    height: 50
+                                    radius: 25
+                                    color: model.isOwner ? "#f39c12" : "#3498db"
+
+                                    Label {
+                                        anchors.centerIn: parent
+                                        text: model.nickname ? model.nickname.substring(0, 1) : "?"
+                                        font.pixelSize: 20
+                                        font.bold: true
+                                        color: "white"
+                                    }
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 5
+
+                                    Label {
+                                        text: model.nickname
+                                        font.pixelSize: 16
+                                        font.bold: true
+                                        color: "#2c3e50"
+                                    }
+
+                                    RowLayout {
+                                        spacing: 10
+
+                                        Rectangle {
+                                            width: 20
+                                            height: 20
+                                            radius: 10
+                                            color: model.audioEnabled ? "#27ae60" : "#e74c3c"
+
+                                            Label {
+                                                anchors.centerIn: parent
+                                                text: "🎤"
+                                                font.pixelSize: 10
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            width: 20
+                                            height: 20
+                                            radius: 10
+                                            color: model.videoEnabled ? "#27ae60" : "#e74c3c"
+
+                                            Label {
+                                                anchors.centerIn: parent
+                                                text: "📹"
+                                                font.pixelSize: 10
+                                            }
+                                        }
+
+                                        Label {
+                                            text: model.isStudying ? "学习中" : "休息中"
+                                            font.pixelSize: 12
+                                            color: model.isStudying ? "#27ae60" : "#95a5a6"
+                                        }
+                                    }
+                                }
+
+                                // 管理按钮（仅房主可见）
+                                Button {
+                                    visible: controller.isOwner && model.participantId !== wsClient.userId
+                                    text: "..."
+                                    implicitWidth: 40
+                                    implicitHeight: 40
+
+                                    onClicked: participantMenu.popup()
+
+                                    Menu {
+                                        id: participantMenu
+
+                                        MenuItem {
+                                            text: "静音"
+                                            onTriggered: controller.muteParticipant(model.participantId)
+                                        }
+                                        MenuItem {
+                                            text: "关闭摄像头"
+                                            onTriggered: controller.stopParticipantVideo(model.participantId)
+                                        }
+                                        MenuItem {
+                                            text: "移除"
+                                            onTriggered: {
+                                                kickDialog.targetId = model.participantId
+                                                kickDialog.targetName = model.nickname
+                                                kickDialog.open()
+                                            }
+                                        }
+                                        MenuItem {
+                                            text: "移交权限"
+                                            onTriggered: {
+                                                transferDialog.targetId = model.participantId
+                                                transferDialog.targetName = model.nickname
+                                                transferDialog.open()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 60
+                    color: "#34495e"
+                    visible: controller.isOwner
+
+                    Button {
+                        anchors.centerIn: parent
+                        text: "全体静音"
+                        font.pixelSize: 14
+                        implicitWidth: 200
+                        implicitHeight: 40
+
+                        background: Rectangle {
+                            color: parent.down ? "#c0392b" : "#e74c3c"
+                            radius: 6
+                        }
+
+                        contentItem: Text {
+                            text: parent.text
+                            font: parent.font
+                            color: "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+
+                        onClicked: muteAllDialog.open()
+                    }
+                }
             }
         }
         
@@ -171,7 +335,7 @@ Page {
                     // 这里应该动态生成视频窗口
                     Repeater {
                         model: 2
-                        
+
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
@@ -242,5 +406,18 @@ Page {
         }
     }
     
+    // 关闭自习室确认对话框
+    Dialog {
+        id: closeRoomDialog
+        title: "确认关闭"
+        modal: true
+        anchors.centerIn: parent
+        standardButtons: Dialog.Yes | Dialog.No
 
+        Label {
+            text: "确定要关闭自习室吗？所有参与者将被移除。"
+        }
+
+        onAccepted: controller.closeRoom()
+    }
 }

@@ -1,4 +1,3 @@
-//ui颜色需要修改，部分逻辑，比如私密性密码设置。
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

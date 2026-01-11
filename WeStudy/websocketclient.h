@@ -39,12 +39,21 @@ signals:
     void userIdChanged();
     void messageReceived(const QJsonObject &message);
     void errorOccurred(const QString &error);
+<<<<<<< HEAD
+=======
+    void participantLeft(const QString &participantId);
+>>>>>>> bca9fd1 (without mediacapture)
 
     //自习室信号
     void roomCreated(const QString &roomId, const QJsonObject &roomInfo);
     void roomJoined(const QString &roomId, const QJsonObject &roomInfo);
+<<<<<<< HEAD
     //void roomLeft();
     //void roomClosed();
+=======
+    void roomLeft();
+    void roomClosed();
+>>>>>>> bca9fd1 (without mediacapture)
     void roomListReceived(const QJsonArray &rooms);//得到房间列表，直接到MlistView里面处理
     void participantJoined(const QJsonObject &participant);
     //void participantLeft(const QString &participantId);

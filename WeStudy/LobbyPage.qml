@@ -171,7 +171,11 @@ Page{
                 }
               onClicked: {
                   if(!wsClient.connected){
+<<<<<<< HEAD
                      connectToServer();
+=======
+                     wsClient.connectToServer(serveripFiled.text.toString());
+>>>>>>> bca9fd1 (without mediacapture)
                   }
               }
             }

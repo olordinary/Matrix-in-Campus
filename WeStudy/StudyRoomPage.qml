@@ -11,6 +11,19 @@ Page {
     
     signal leaveRoom()
 
+    Camera {
+        id: camera
+        active: true   // ⚠ 默认不打开
+        }
+    CaptureSession {
+        camera: camera
+        videoOutput: localOutput
+        // audioInput: mic
+    }
+
+
+
+
     header: ToolBar {
         background: Rectangle {
             color: "#2c3e50"
@@ -324,33 +337,75 @@ Page {
                     Layout.alignment: Qt.AlignHCenter
                 }
                 
-                // 视频网格
-                GridLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    columns: 2
-                    rowSpacing: 15
-                    columnSpacing: 15
+                // // 视频网格
+                // GridLayout {
+                //     Layout.fillWidth: true
+                //     Layout.fillHeight: true
+                //     columns: 2
+                //     rowSpacing: 15
+                //     columnSpacing: 15
                     
-                    // 这里应该动态生成视频窗口
-                    Repeater {
-                        model: 2
+                //     // 这里应该动态生成视频窗口
+                //     // Repeater {
+                //     //     model: 2
+                //         VideoSink{
+                //             id: localVideo
+                //             onVideoFrameChanged: {
+                //                         // mediaController.onVideoFrame(videoSink.videoFrame)
+                //                         if (localVideo.videoFrame && localVideo.videoFrame.isValid)
+                //                                    mediaController.onVideoFrame(localVideo.videoFrame)
+                //                     }
+                //         }
 
+                // }
+                GridLayout {
+                        id: videoGrid
+                        columns: 2
+                        rowSpacing: 15
+                        columnSpacing: 15
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        // 1️⃣ 本地视频窗口
                         Rectangle {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            color: "#34495e"
-                            radius: 10
-                            
-                            Label {
-                                anchors.centerIn: parent
-                                text: "视频窗口 " + (index + 1)
-                                font.pixelSize: 16
-                                color: "#7f8c8d"
+                            width: 380
+                            height: 300
+                            color: "black"
+
+                            VideoSink {
+                                id: localVideoSink
+                                onVideoFrameChanged: {
+                                    if (localVideoSink.videoFrame && localVideoSink.videoFrame.isValid)
+                                        mediaController.onVideoFrame(localVideoSink.videoFrame) // 传给C++
+                                }
+                            }
+
+                            VideoOutput {
+                                id:localOutput
+                                anchors.fill: parent
+                                // videoSink: localVideoSink
+
+                            }
+                        }
+
+                        // 2️⃣ 远程视频窗口
+                        Rectangle {
+                            width: 380
+                            height: 300
+                            color: "black"
+
+                            // VideoOutput 直接显示 C++ 传来的远端帧
+                            VideoOutput {
+                                id: remoteVideoOutput
+                                anchors.fill: parent
+                                // C++ 层会通过 setSource(QVideoFrame) 或者自定义 VideoSink 替代
+                                // videoSink: remoteVideoSink
                             }
                         }
                     }
-                }
+
+
+
                 
                 // 控制栏
                 Rectangle {

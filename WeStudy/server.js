@@ -1,4 +1,3 @@
-
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8080 });
 
@@ -13,7 +12,35 @@ wss.on('connection', (ws) => {
     let userId = null;
     
     console.log('新客户端连接');
-    
+    function buildPublicRoomList() {
+        const roomList = [];
+        for (const [roomId, room] of rooms) {
+            if (!room.isPrivate && room.isActive) {
+                roomList.push({
+                    roomId: roomId,
+                    roomName: room.roomName,
+                    currentParticipants: room.participants.size,
+                    maxParticipants: room.maxParticipants,
+                    isPrivate: room.isPrivate
+                });
+            }
+        }
+        return roomList;
+    }
+
+    function broadcastRoomList() {
+        const message = {
+            type: 'roomList',
+            rooms: buildPublicRoomList()
+        };
+        for (const [clientId, clientWs] of clients) {
+            if (clientWs && clientWs.readyState === WebSocket.OPEN) {
+                clientWs.send(JSON.stringify(message));
+            } else {
+                clients.delete(clientId);
+            }
+        }
+    }
     ws.on('message', (data) => {
         try {
             const message = JSON.parse(data);
@@ -27,6 +54,10 @@ wss.on('connection', (ws) => {
                         type: 'registered',
                         userId: userId
                     }));
+                    sendToClient(userId, {
+                        type: 'roomList',
+                        rooms: buildPublicRoomList()
+                    });
                     console.log('用户注册:', userId);
                     break;
                 case 'webrtcOffer':
@@ -82,11 +113,12 @@ wss.on('connection', (ws) => {
         if (userId) {
             console.log('客户端断开:', userId);
             clients.delete(userId);
-            
+            let roomListChanged=false;
             // 清理用户所在的房间
             for (const [roomId, room] of rooms) {
                 if (room.participants.has(userId)) {
                     room.participants.delete(userId);
+                    roomListChanged=true;
                     broadcastToRoom(roomId, {
                         type: 'participantLeft',
                         participantId: userId
@@ -96,6 +128,9 @@ wss.on('connection', (ws) => {
                         rooms.delete(roomId);
                     }
                 }
+            }
+            if(roomListChanged){
+                broadcastRoomList();
             }
         }
     });
@@ -130,7 +165,7 @@ wss.on('connection', (ws) => {
             roomId: roomId,
             roomInfo: getRoomInfo(roomId)
         });
-        
+        broadcastRoomList();
         console.log('自习室创建:', roomId);
     }
     
@@ -179,6 +214,7 @@ wss.on('connection', (ws) => {
                     type: 'peerJoined',
                     peerId: userId,  // 新加入者的 ID
             },userId)
+        broadcastRoomList();
         console.log('用户加入自习室:', userId, roomId);
     }
     
@@ -203,7 +239,7 @@ wss.on('connection', (ws) => {
         if (room.participants.size === 0) {
             rooms.delete(roomId);
         }
-        
+        broadcastRoomList();
         console.log('用户离开自习室:', userId, roomId);
     }
     
@@ -219,26 +255,15 @@ wss.on('connection', (ws) => {
         });
         
         rooms.delete(roomId);
+        broadcastRoomList();
         console.log('自习室关闭:', roomId);
     }
     
     function handleGetRoomList(userId) {
-        const roomList = [];
-        for (const [roomId, room] of rooms) {
-            if (!room.isPrivate && room.isActive) {
-                roomList.push({
-                    roomId: roomId,
-                    roomName: room.roomName,
-                    currentParticipants: room.participants.size,
-                    maxParticipants: room.maxParticipants,
-                    isPrivate: room.isPrivate
-                });
-            }
-        }
-        
+
         sendToClient(userId, {
             type: 'roomList',
-            rooms: roomList
+            rooms:buildPublicRoomList()
         });
     }
     

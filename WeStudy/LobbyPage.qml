@@ -103,28 +103,6 @@ Page{
 
             }
 
-            Button {
-                text: "刷新列表"
-                font.pixelSize: 16
-                implicitWidth: 180
-                implicitHeight: 50
-
-                background: Rectangle {
-                    color: parent.down ? "#2980b9" : "#3498db"
-                    radius: 8
-                }
-
-                contentItem: Text {
-                    text: parent.text
-                    font: parent.font
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                onClicked: wsClient.getRoomList()
-
-            }
-
             TextField {
                 id: serveripFiled
                 text: "ws://localhost:8080"
@@ -262,7 +240,6 @@ Page{
                     }
                 }
                 Component.onCompleted: {
-                    wsClient.getRoomList()
                 }
 
                 ScrollView {
@@ -309,7 +286,7 @@ Page{
                                     spacing: 5
 
                                     Label {
-                                        text: "roomName"
+                                        text:model.roomName
                                         font.pixelSize: 18
                                         font.bold: true
                                         color: "#2c3e50"

@@ -50,7 +50,6 @@ void Controller::joinRoom(const QString &roomId, const QString &password) {
     m_client->joinRoom(roomId, password);
 }
 
-
 void Controller::startStudying() {
     if (!isInRoom()) {
         emit errorOccurred("请先加入自习室");
@@ -70,7 +69,6 @@ void Controller::stopStudying() {
     m_isStudying = false;
     emit isStudyingChanged();
 }
-
 
 Controller::~Controller() {
     // clearCurrentRoom();
@@ -92,10 +90,12 @@ void Controller::handleRoomCreated(const QString &roomId, const QJsonObject &roo
     QJsonArray participantsArray = roomInfo["participants"].toArray();
     updateParticipantsFromJson(participantsArray);
 
+    m_webrtc->onRoomCreated(roomId, roomInfo);
+
     emit currentRoomChanged();
     emit isInRoomChanged();
     emit isOwnerChanged();
-//这里可能少了收集本地的webRtcIDE SDP、
+    //这里可能少了收集本地的webRtcIDE SDP、
     qDebug() << "Room created:" << roomId;
 }
 
@@ -119,13 +119,15 @@ void Controller::handleRoomJoined(const QString &roomId, const QJsonObject &room
     QJsonArray participantsArray = roomInfo["participants"].toArray();
     updateParticipantsFromJson(participantsArray);//更新我房间管理器的成员列表
 
-    // 为每个已存在的参与者创建WebRTC连接
-    for (Participant *p : m_participants) {
-        if (p->participantId() != m_client->userId()) {
+    m_webrtc->onRoomJoined(roomId, roomInfo);
 
-
-        }
-    }
+    // // 为每个已存在的参与者创建WebRTC连接
+    //  for (Participant *p : m_participants) {
+    //      if (p->participantId() != m_client->userId()) {
+    //          // 加入者作为 answerer，不主动创建 offer
+    //          m_webrtc->setupPeerConnection(false);  // false = answerer
+    //      }
+    //  }
 
     emit currentRoomChanged();
     emit isInRoomChanged();
@@ -150,10 +152,10 @@ void Controller::handleParticipantJoined(const QJsonObject &participant) {
         m_currentRoom->setCurrentParticipants(m_participants.count());
     }
 
-    // 为新加入的参与者创建WebRTC连接
-    if (participantId != m_client->userId()) {
-
-    }
+    // // 为新加入的参与者创建WebRTC连接
+    // if (participantId != m_client->userId()) {
+    //     m_webrtc->setupPeerConnection(true);
+    // }
 
     emit participantsChanged();
 
@@ -169,6 +171,9 @@ void Controller::clearCurrentRoom() {
     qDeleteAll(m_participants);
     m_participants.clear();
     emit participantsChanged();
+
+    m_webrtc->closePeerConnection();
+
 }
 
 void Controller::updateParticipantsFromJson(const QJsonArray &participantsArray) {
@@ -199,3 +204,11 @@ Participant *Controller::findParticipant(const QString &participantId) {
     }
     return nullptr;
 }
+
+
+
+
+
+
+
+

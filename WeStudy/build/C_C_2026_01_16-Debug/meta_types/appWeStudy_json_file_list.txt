@@ -1,6 +1,0 @@
-/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/appWeStudy_autogen/include/../EWIEGA46WW/moc_controller.cpp.json
-/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/appWeStudy_autogen/include/../EWIEGA46WW/moc_mediacontroller.cpp.json
-/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/appWeStudy_autogen/include/../EWIEGA46WW/moc_participant.cpp.json
-/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/appWeStudy_autogen/include/../EWIEGA46WW/moc_studyroom.cpp.json
-/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/appWeStudy_autogen/include/../EWIEGA46WW/moc_webrtcmanager.cpp.json
-/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/appWeStudy_autogen/include/../EWIEGA46WW/moc_websocketclient.cpp.json

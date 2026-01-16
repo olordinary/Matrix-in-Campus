@@ -50,8 +50,7 @@ void Controller::joinRoom(const QString &roomId, const QString &password) {
     m_client->joinRoom(roomId, password);
 }
 
-<<<<<<< HEAD
-=======
+
 void Controller::startStudying() {
     if (!isInRoom()) {
         emit errorOccurred("请先加入自习室");
@@ -72,7 +71,7 @@ void Controller::stopStudying() {
     emit isStudyingChanged();
 }
 
->>>>>>> bca9fd1 (without mediacapture)
+
 Controller::~Controller() {
     // clearCurrentRoom();
 }
@@ -123,11 +122,8 @@ void Controller::handleRoomJoined(const QString &roomId, const QJsonObject &room
     // 为每个已存在的参与者创建WebRTC连接
     for (Participant *p : m_participants) {
         if (p->participantId() != m_client->userId()) {
-<<<<<<< HEAD
-            m_webrtc->createPeerConnection(p->participantId());
-=======
-            m_webrtc->setupPeerConnection(true);
->>>>>>> bca9fd1 (without mediacapture)
+
+
         }
     }
 
@@ -156,11 +152,7 @@ void Controller::handleParticipantJoined(const QJsonObject &participant) {
 
     // 为新加入的参与者创建WebRTC连接
     if (participantId != m_client->userId()) {
-<<<<<<< HEAD
-        m_webrtc->createPeerConnection(participantId);
-=======
-        m_webrtc->setupPeerConnection(true);
->>>>>>> bca9fd1 (without mediacapture)
+
     }
 
     emit participantsChanged();
@@ -177,13 +169,6 @@ void Controller::clearCurrentRoom() {
     qDeleteAll(m_participants);
     m_participants.clear();
     emit participantsChanged();
-
-<<<<<<< HEAD
-    m_webrtc->closeAllConnections();
-=======
-    m_webrtc->closePeerConnection();
->>>>>>> bca9fd1 (without mediacapture)
-
 }
 
 void Controller::updateParticipantsFromJson(const QJsonArray &participantsArray) {

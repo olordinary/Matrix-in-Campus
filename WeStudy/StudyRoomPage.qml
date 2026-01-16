@@ -1,11 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-<<<<<<< HEAD
-
-=======
 import QtMultimedia
->>>>>>> bca9fd1 (without mediacapture)
+
 Page {
     id: root
     

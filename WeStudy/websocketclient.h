@@ -1,3 +1,6 @@
+//用于处理与WebSocket服务器的通信，
+//处理与服务器之间的消息收发：包括发送JSON格式的消息，接受并解析服务器返回的JSON消息
+
 #pragma once
 #include <QObject>
 #include <QWebSocket>
@@ -27,9 +30,7 @@ public:
     Q_INVOKABLE void sendIceCandidate(const QString &targetId, const QString &candidate);
 
 
-    Q_INVOKABLE void createRoom(const QString &roomName, int maxParticipants,
-
-                                bool isPrivate,bool videoStatus,bool audioStatus,const QString &password=" ");
+    Q_INVOKABLE void createRoom(const QString &roomName, int maxParticipants,bool isPrivate,bool videoStatus,bool audioStatus,const QString &password=" ");
     Q_INVOKABLE void getRoomList();//请求得到房间列表，展示到大厅，里面有很多房间信息，有对应的响应的操作
     Q_INVOKABLE void joinRoom(const QString &roomId, const QString &password = "");
 
@@ -41,14 +42,13 @@ signals:
     void errorOccurred(const QString &error);
     void participantLeft(const QString &participantId);
 
-
     //自习室信号
     void roomCreated(const QString &roomId, const QJsonObject &roomInfo);
     void roomJoined(const QString &roomId, const QJsonObject &roomInfo);
+    void peerJoined(const QString &peerId);
 
     void roomLeft();
     void roomClosed();
-
     void roomListReceived(const QJsonArray &rooms);//得到房间列表，直接到MlistView里面处理
     void participantJoined(const QJsonObject &participant);
     //void participantLeft(const QString &participantId);
@@ -68,7 +68,10 @@ private:
     void handleMessage(const QJsonObject &message);
     QJsonObject createMessage(const QString &type) const;
     QWebSocket *m_webSocket;
-    bool m_connected;
     QString m_userId;//存储该服务器的用户ID，当前用户的唯一标识
     QString m_currentRoomId;//记录当前用户进入的房间号
+
+    //状态
+    bool m_connected;
+    bool m_isOfferer;
 };

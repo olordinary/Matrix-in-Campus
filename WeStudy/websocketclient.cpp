@@ -1,3 +1,6 @@
+//用于处理与WebSocket服务器的通信，
+//处理与服务器之间的消息收发：包括发送JSON格式的消息，接受并解析服务器返回的JSON消息
+
 #include "websocketclient.h"
 #include <QJsonArray>
 
@@ -21,6 +24,7 @@ void WebSocketClient::setUserId(const QString &userId)
     }
 }
 
+//连接到服务器
 void WebSocketClient::connectToServer(const QString &url) {
     qDebug() << "Connecting to:" << url;
     m_webSocket->open(QUrl(url));
@@ -160,55 +164,48 @@ void WebSocketClient::handleMessage(const QJsonObject &message)
         QString userId = message["userId"].toString();//分配唯一标识当前用户的ID
         setUserId(userId);//用户ID暴露出去
         qDebug() << "Registered with userId:" << userId;
-    }
-    else if (type == "roomCreated") {
+    }else if (type == "roomCreated") {
         QString roomId = message["roomId"].toString();
         QJsonObject roomInfo = message["roomInfo"].toObject();
         m_currentRoomId = roomId;
         emit roomCreated(roomId, roomInfo);
-    }
-    else if (type == "roomJoined") {
+    }else if (type == "roomJoined") {
         QString roomId = message["roomId"].toString();
         QJsonObject roomInfo = message["roomInfo"].toObject();
         m_currentRoomId = roomId;
         emit roomJoined(roomId, roomInfo);
-    }
-    else if (type == "roomLeft") {
+    } else if (type == "peerJoined") {
+        QString peerId = message["peerId"].toString();
+        emit peerJoined(peerId);
+        // 客户端之间即将建立连接
+    } else if (type == "roomLeft") {
         m_currentRoomId.clear();
         emit roomLeft();
-    }
-    else if (type == "roomClosed") {
+    } else if (type == "roomClosed") {
         m_currentRoomId.clear();
         emit roomClosed();
-    }
-    else if (type == "roomList") {
+    } else if (type == "roomList") {
         QJsonArray rooms = message["rooms"].toArray();
         emit roomListReceived(rooms);
-    }
-    else if (type == "participantJoined") {
+    } else if (type == "participantJoined") {
         QJsonObject participant = message["participant"].toObject();
         emit participantJoined(participant);
-    }
-    else if (type == "participantLeft") {
+    } else if (type == "participantLeft") {
         QString participantId = message["participantId"].toString();
         emit participantLeft(participantId);
-    }
-    else if (type == "webrtcOffer") {
+    } else if (type == "webrtcOffer") {
         QString fromId = message["fromId"].toString();
         QString sdp = message["sdp"].toString();
         emit offerReceived(fromId, sdp);
-    }
-    else if (type == "webrtcAnswer") {
+    } else if (type == "webrtcAnswer") {
         QString fromId = message["fromId"].toString();
         QString sdp = message["sdp"].toString();
         emit answerReceived(fromId, sdp);
-    }
-    else if (type == "iceCandidate") {
+    } else if (type == "iceCandidate") {
         QString fromId = message["fromId"].toString();
         QString candidate = message["candidate"].toString();
         emit iceCandidateReceived(fromId, candidate);
-    }
-    else if (type == "error") {
+    } else if (type == "error") {
         QString error = message["message"].toString();
         emit errorOccurred(error);
     }

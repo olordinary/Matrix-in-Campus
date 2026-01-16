@@ -1,5 +1,3 @@
-// WebSocket信令服务器示例 (Node.js)
-// 安装依赖: npm install ws
 
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8080 });
@@ -31,13 +29,20 @@ wss.on('connection', (ws) => {
                     }));
                     console.log('用户注册:', userId);
                     break;
-                    
+                case 'webrtcOffer':
+                     handleWebRTCOffer(message, userId);
+                     console.log('收到offer来自:', userId);
+                    break;
+                case 'webrtcAnswer':
+                     handleWebRTCAnswer(message, userId);
+                     console.log('收到answer来自:', userId);
+                    break;
+                case 'iceCandidate':
+                    handleWebRTCCandidate(message, userId);
+                    console.log('收到candidate来自:', userId);
+                    break;
                 case 'createRoom':
-<<<<<<< HEAD
-                    handleCreateRoom(message, userId);
-=======
                     handleCreateRoom(message, userId);//userID在创建时唯一标识一个用户
->>>>>>> bca9fd1 (without mediacapture)
                     break;
                     
                 case 'joinRoom':
@@ -64,11 +69,6 @@ wss.on('connection', (ws) => {
                     handleRoomManagement(message, userId);
                     break;
                     
-                case 'webrtcOffer':
-                case 'webrtcAnswer':
-                case 'iceCandidate':
-                    handleWebRTCSignaling(message, userId);
-                    break;
                     
                 default:
                     console.log('未知消息类型:', message.type);
@@ -136,11 +136,7 @@ wss.on('connection', (ws) => {
     
     function handleJoinRoom(message, userId) {
         const roomId = message.roomId;
-<<<<<<< HEAD
-        const room = rooms.get(roomId);
-=======
         const room = rooms.get(roomId);//在rooms找房间
->>>>>>> bca9fd1 (without mediacapture)
         
         if (!room) {
             sendToClient(userId, {
@@ -165,11 +161,7 @@ wss.on('connection', (ws) => {
             });
             return;
         }
-<<<<<<< HEAD
-        
-=======
         //添加到房间的成员列表中
->>>>>>> bca9fd1 (without mediacapture)
         room.participants.set(userId, {
             participantId: userId,
             nickname: '用户' + userId.substring(0, 6),
@@ -184,14 +176,9 @@ wss.on('connection', (ws) => {
         
         // 通知其他参与者
         broadcastToRoom(roomId, {
-            type: 'participantJoined',
-            participant: {
-                participantId: userId,
-                nickname: '用户' + userId.substring(0, 6),
-                isOwner: false
-            }
-        }, userId);
-        
+                    type: 'peerJoined',
+                    peerId: userId,  // 新加入者的 ID
+            },userId)
         console.log('用户加入自习室:', userId, roomId);
     }
     
@@ -261,16 +248,6 @@ wss.on('connection', (ws) => {
         broadcastToRoom(roomId, message, userId);
     }
     
-    function handleWebRTCSignaling(message, userId) {
-        const targetId = message.targetId;
-        
-        sendToClient(targetId, {
-            type: message.type,
-            fromId: userId,
-            sdp: message.sdp,
-            candidate: message.candidate
-        });
-    }
     
     function getRoomInfo(roomId) {
         const room = rooms.get(roomId);
@@ -290,7 +267,37 @@ wss.on('connection', (ws) => {
             participants: participants
         };
     }
-    
+
+    //rtc管理
+    function handleWebRTCOffer(message, userId) {
+        const targetId = message.targetId;
+        sendToClient(targetId, {
+            type:'webrtcOffer',
+            fromId: userId,
+            sdp: message.sdp
+        });
+    }
+
+    function handleWebRTCAnswer(message, userId) {
+        const targetId = message.targetId;
+        sendToClient(targetId, {
+            type:'webrtcAnswer',
+            fromId: userId,
+            sdp: message.sdp
+        });
+    }
+
+    function handleWebRTCCandidate(message, userId) {
+        const targetId = message.targetId;
+        sendToClient(targetId, {
+            type:'iceCandidate',
+            fromId: userId,
+            candidate: message.candidate
+        });
+    }
+
+
+
     function sendToClient(userId, message) {
         const ws = clients.get(userId);
         if (ws && ws.readyState === WebSocket.OPEN) {

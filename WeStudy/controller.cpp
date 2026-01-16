@@ -18,7 +18,12 @@ Controller::Controller(WebSocketClient *client, WebRTCManager *webrtc, QObject *
             this, &Controller::handleParticipantJoined);
     connect(m_client, &WebSocketClient::errorOccurred,
             this, &Controller::errorOccurred);
-
+    connect(m_client, &WebSocketClient::roomLeft,
+            this, &Controller::handleRoomLeft);
+    connect(m_client, &WebSocketClient::roomClosed,
+            this, &Controller::handleRoomClosed);
+    connect(m_client, &WebSocketClient::participantLeft,
+            this, &Controller::handleParticipantLeft);
 }
 
 QQmlListProperty<Participant> Controller::participants() {
@@ -51,7 +56,29 @@ void Controller::joinRoom(const QString &roomId, const QString &password) {
 
     m_client->joinRoom(roomId, password);
 }
+void Controller::leaveRoom() {
+    if (!m_currentRoom) {
+        return;
+    }
+    const QString roomId = m_currentRoom->roomId();
+    QJsonObject message;
+    message["type"] = "leaveRoom";
+    message["roomId"] = roomId;
+    m_client->sendMessage(message);
+    clearRoomStateAndNotify();
+}
 
+void Controller::closeRoom() {
+    if (!m_currentRoom) {
+        return;
+    }
+    const QString roomId = m_currentRoom->roomId();
+    QJsonObject message;
+    message["type"] = "closeRoom";
+    message["roomId"] = roomId;
+    m_client->sendMessage(message);
+    clearRoomStateAndNotify();
+}
 void Controller::startStudying() {
     if (!isInRoom()) {
         emit errorOccurred("请先加入自习室");
@@ -91,7 +118,7 @@ void Controller::handleRoomCreated(const QString &roomId, const QJsonObject &roo
     // 更新参与者列表
     QJsonArray participantsArray = roomInfo["participants"].toArray();
     updateParticipantsFromJson(participantsArray);
-
+    m_currentRoom->setCurrentParticipants(roomInfo["currentParticipants"].toInt(m_participants.count()));
     m_webrtc->onRoomCreated(roomId, roomInfo);
 
     emit currentRoomChanged();
@@ -163,6 +190,29 @@ void Controller::handleParticipantJoined(const QJsonObject &participant) {
 
     qDebug() << "Participant joined:" << participantId;
 }
+void Controller::handleParticipantLeft(const QString &participantId) {
+    Participant *p = findParticipant(participantId);
+    if (!p) {
+        return;
+    }
+    m_participants.removeOne(p);
+    p->deleteLater();
+
+    if (m_currentRoom) {
+        m_currentRoom->setCurrentParticipants(m_participants.count());
+    }
+    emit participantsChanged();
+    qDebug() << "Participant left:" << participantId;
+}
+void Controller::handleRoomLeft() {
+    clearRoomStateAndNotify();
+    qDebug() << "Room left";
+}
+
+void Controller::handleRoomClosed() {
+    clearRoomStateAndNotify();
+    qDebug() << "Room closed";
+}
 
 void Controller::clearCurrentRoom() {
     if (m_currentRoom) {
@@ -177,7 +227,17 @@ void Controller::clearCurrentRoom() {
     m_webrtc->closePeerConnection();
 
 }
-
+void Controller::clearRoomStateAndNotify() {
+    const bool wasStudying = m_isStudying;
+    m_isStudying = false;
+    clearCurrentRoom();
+    emit currentRoomChanged();
+    emit isInRoomChanged();
+    emit isOwnerChanged();
+    if (wasStudying) {
+        emit isStudyingChanged();
+    }
+}
 void Controller::updateParticipantsFromJson(const QJsonArray &participantsArray) {
     qDeleteAll(m_participants);
     m_participants.clear();

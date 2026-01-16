@@ -46,6 +46,7 @@ ApplicationWindow {
     Component {
         id: studyRoomPage
         StudyRoomPage {
+            onLeaveRoom: controller.leaveRoom()
         }
     }
 

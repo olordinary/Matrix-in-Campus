@@ -215,11 +215,12 @@ wss.on('connection', (ws) => {
             return;
         }
         //添加到房间的成员列表中
-        room.participants.set(userId, {
+        const newParticipant={
             participantId: userId,
             nickname: '用户' + userId.substring(0, 6),
             isOwner: false
-        });
+        };
+        room.participants.set(userId,newParticipant);
         
         sendToClient(userId, {
             type: 'roomJoined',
@@ -232,6 +233,10 @@ wss.on('connection', (ws) => {
                     type: 'peerJoined',
                     peerId: userId,  // 新加入者的 ID
             },userId)
+        broadcastToRoom(roomId, {
+            type: 'participantJoined',
+            participant: newParticipant
+        }, userId)
         broadcastRoomList();
         console.log('用户加入自习室:', userId, roomId);
     }

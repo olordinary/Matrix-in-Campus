@@ -39,6 +39,8 @@ public:
     Q_INVOKABLE void joinRoom(const QString &roomId, const QString &password = "");
     Q_INVOKABLE void startStudying();
     Q_INVOKABLE void stopStudying();
+    Q_INVOKABLE void leaveRoom();
+    Q_INVOKABLE void closeRoom();
     ~Controller();
     //信号：Controller通知QML刷新与错误通知
 signals:
@@ -54,9 +56,12 @@ private slots:
     void handleRoomCreated(const QString &roomId, const QJsonObject &roomInfo);//创建房间后对客户端的改变。更新当前房间的m_currentRoom,更新当前房间的m_participants
     void handleRoomJoined(const QString &roomId, const QJsonObject &roomInfo);
     void handleParticipantJoined(const QJsonObject &participant);
-
+    void handleRoomLeft();
+    void handleRoomClosed();
+    void handleParticipantLeft(const QString &particpantId);
 private:
     void clearCurrentRoom();//清空UI模型+关闭WebRTC
+    void clearRoomStateAndNotify();
     void updateParticipantsFromJson(const QJsonArray &participantsArray);//更新当前房间的m_participants
     Participant* findParticipant(const QString &participantId); //防止重复加入同一个participantid
 

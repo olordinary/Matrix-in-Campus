@@ -6,7 +6,7 @@
 #include <QImage>
 #include <QTimer>
 #include "webrtcmanager.h"
-
+#include <QPointer>
 
 class MediaController:public QObject
 {
@@ -20,10 +20,10 @@ public:
     explicit MediaController(QObject *parent = nullptr);
     ~MediaController();
 
-    QVideoSink* videoSink() const { return m_videoSink; }
+    QVideoSink* videoSink() const { return m_videoSink.data(); }
     void setVideoSink(QVideoSink *sink);
 
-    QVideoSink* remoteSink() const { return m_remoteSink; }
+    QVideoSink* remoteSink() const { return m_remoteSink.data(); }
     void setRemoteSink(QVideoSink *sink);
 
     bool isCapturing() const { return m_isCapturing; }
@@ -55,8 +55,8 @@ private:
     QImage decodeVideo(const QByteArray &data);
     QImage videoFrameToImage(const QVideoFrame &frame);
 
-    QVideoSink *m_videoSink = nullptr;
-    QVideoSink *m_remoteSink = nullptr;
+    QPointer<QVideoSink>m_videoSink = nullptr;
+    QPointer<QVideoSink>m_remoteSink = nullptr;
     bool m_isCapturing = false;
 
 

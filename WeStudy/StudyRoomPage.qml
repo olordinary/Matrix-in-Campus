@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtMultimedia
-
 Page {
     id: root
     
@@ -10,14 +9,13 @@ Page {
 
     Camera {
         id: camera
-        active: true   // ⚠ 默认不打开
+        active: true
         }
     CaptureSession {
         camera: camera
         videoOutput: localOutput
         // audioInput: mic
     }
-
 
 
 
@@ -320,143 +318,184 @@ Page {
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: "#2c3e50"
-            
+
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 20
-                spacing: 15
-                
-                Label {
-                    text: "视频预览区域"
-                    font.pixelSize: 24
-                    font.bold: true
-                    color: "white"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-                
-                // // 视频网格
-                // GridLayout {
-                //     Layout.fillWidth: true
-                //     Layout.fillHeight: true
-                //     columns: 2
-                //     rowSpacing: 15
-                //     columnSpacing: 15
-                    
-                //     // 这里应该动态生成视频窗口
-                //     // Repeater {
-                //     //     model: 2
-                //         VideoSink{
-                //             id: localVideo
-                //             onVideoFrameChanged: {
-                //                         // mediaController.onVideoFrame(videoSink.videoFrame)
-                //                         if (localVideo.videoFrame && localVideo.videoFrame.isValid)
-                //                                    mediaController.onVideoFrame(localVideo.videoFrame)
-                //                     }
-                //         }
-
-                // }
+                anchors.margins: 25
+                spacing: 20
+                // --- 视频展示区域 ---
                 GridLayout {
-                        id: videoGrid
-                        columns: 2
-                        rowSpacing: 15
-                        columnSpacing: 15
+                    id: videoGrid
+                    columns: 2
+                    rowSpacing: 20
+                    columnSpacing: 20
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    // 本地视频窗口容器
+                    Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        color: "#1a252f"
+                        border.color: "#27ae60"
+                        border.width: 2
+                        radius: 12
+                        clip: true
 
-                        // 1️⃣ 本地视频窗口
-                        Rectangle {
-                            width: 380
-                            height: 300
-                            color: "black"
+                        VideoOutput {
+                            id: localOutput
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            fillMode: VideoOutput.PreserveAspectFit
 
-                            VideoSink {
-                                id: localVideoSink
-                                onVideoFrameChanged: {
-                                    if (localVideoSink.videoFrame && localVideoSink.videoFrame.isValid)
-                                        mediaController.onVideoFrame(localVideoSink.videoFrame) // 传给C++
-                                }
-                            }
-
-                            VideoOutput {
-                                id:localOutput
-                                anchors.fill: parent
-                                // videoSink: localVideoSink
-
+                            Component.onCompleted: {
+                                // if (typeof mediaController !== "undefined") {
+                                    mediaController.videoSink = videoSink
+                                    console.log("已绑定本地 VideoSink")
+                                    // mediaController.startCapture()
+                                // }
                             }
                         }
 
-                        // 2️⃣ 远程视频窗口
+                        // 浮动标签
                         Rectangle {
-                            width: 380
-                            height: 300
-                            color: "black"
-
-                            // VideoOutput 直接显示 C++ 传来的远端帧
-                            VideoOutput {
-                                id: remoteVideoOutput
-                                anchors.fill: parent
-                                // C++ 层会通过 setSource(QVideoFrame) 或者自定义 VideoSink 替代
-                                // videoSink: remoteVideoSink
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.margins: 10
+                            width: 70; height: 24
+                            color: "#AA000000"
+                            radius: 4
+                            Label {
+                                anchors.centerIn: parent
+                                text: "本地"
+                                color: "white"
+                                font.pixelSize: 12
                             }
                         }
                     }
 
+                    // 远程视频窗口容器
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "#1a252f"
+                        border.color: "#34495e"
+                        border.width: 2
+                        radius: 12
+                        clip: true
 
+                        VideoOutput {
+                            id: remoteVideoOutput
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            fillMode: VideoOutput.PreserveAspectFit
 
-                
-                // 控制栏
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 80
-                    color: "#34495e"
-                    radius: 10
-                    
-                    RowLayout {
-                        anchors.centerIn: parent
-                        spacing: 30
-                        
-                        Button {
-                            id:micB
-                            text:"🎤"
-                            font.pixelSize: 24
-                            implicitWidth: 60
-                            implicitHeight: 60
-                            
-                            background: Rectangle {
-                                color:"#27ae60"
-                                radius: 30
-                            }
-                            
-                            onClicked: {
-                                micB.text="🔇"
-                                // color:"#27ae60"
+                            Component.onCompleted: {
+                                            // 将 QML 内部创建的 videoSink 对象传回给 C++
+                                            mediaController.remoteSink = videoSink
+                                            console.log("已绑定远程 VideoSink")
+                                    }
 
-                            }
                         }
-                        
-                        Button {
 
-                            text:"📹"
-                            font.pixelSize: 24
-                            implicitWidth: 60
-                            implicitHeight: 60
-                            
-                            background: Rectangle {
+                        // // 远程占位提示
+                        // ColumnLayout {
+                        //     anchors.centerIn: parent
+                        //     visible: !remoteVideoOutput.videoSink || !remoteVideoOutput.videoSink.videoFrame
+                        //     spacing: 10
+                        //     Label {
+                        //         text: "⌛"
+                        //         font.pixelSize: 40
+                        //         Layout.alignment: Qt.AlignHCenter
+                        //     }
+                        //     Label {
+                        //         text: "等待对方加入..."
+                        //         color: "#95a5a6"
+                        //         font.pixelSize: 14
+                        //         Layout.alignment: Qt.AlignHCenter
+                        //     }
+                        // }
 
-                                radius: 30
-                            }
-                            
-
-                            onClicked: {
-                                text:"📷"
-
+                        // 浮动标签
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.margins: 10
+                            width: 70; height: 24
+                            color: "#AA000000"
+                            radius: 4
+                            Label {
+                                anchors.centerIn: parent
+                                text: "远程视频"
+                                color: "white"
+                                font.pixelSize: 12
                             }
                         }
                     }
                 }
             }
+
+                // --- 控制栏区域 ---
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 100
+                    color: "#34495e"
+                    radius: 15
+
+                    RowLayout {
+                        anchors.centerIn: parent
+                        spacing: 40
+
+                        // 麦克风按钮
+                        Button {
+                            id: micBtn
+                            property bool isMuted: false
+                            implicitWidth: 64; implicitHeight: 64
+
+                            contentItem: Text {
+                                text: micBtn.isMuted ? "🔇" : "🎤"
+                                font.pixelSize: 28
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            background: Rectangle {
+                                color: micBtn.isMuted ? "#e74c3c" : "#27ae60"
+                                radius: 32
+                                // 简单的点击缩放效果
+                                scale: micBtn.pressed ? 0.9 : 1.0
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                            }
+
+                            onClicked: isMuted = !isMuted
+                        }
+
+                        // 摄像头按钮
+                        Button {
+                            id: camBtn
+                            property bool isOff: false
+                            implicitWidth: 64; implicitHeight: 64
+
+                            contentItem: Text {
+                                text: camBtn.isOff ? "❌" : "📹"
+                                font.pixelSize: 28
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            background: Rectangle {
+                                color: camBtn.isOff ? "#e74c3c" : "#2980b9"
+                                radius: 32
+                                scale: camBtn.pressed ? 0.9 : 1.0
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                            }
+
+                            onClicked: isOff = !isOff
+                        }
+                    }
+                }
         }
-    }
+
     
     // 关闭自习室确认对话框
     Dialog {
@@ -472,4 +511,5 @@ Page {
 
         onAccepted: controller.closeRoom()
     }
+}
 }

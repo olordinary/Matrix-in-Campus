@@ -15,9 +15,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     WebSocketClient wsClient;
-    WebRTCManager webrtcManager(&wsClient);
-    Controller controller(&wsClient, &webrtcManager);
     MediaController mediaControler;
+    WebRTCManager webrtcManager(&wsClient,&mediaControler);
+    Controller controller(&wsClient, &webrtcManager);
+
 
     QQmlApplicationEngine engine;
 

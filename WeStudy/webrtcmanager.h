@@ -1,5 +1,3 @@
-
-//#include <QMap>
 #pragma once
 #include <QObject>
 #include <QByteArray>
@@ -7,6 +5,7 @@
 #include <memory>
 
 class WebSocketClient;
+class MediaController;
 
 class WebRTCManager : public QObject
 {
@@ -16,21 +15,18 @@ class WebRTCManager : public QObject
     Q_PROPERTY(bool videoEnabled READ isVideoEnabled NOTIFY videoStateChanged)
 
 public:
-    explicit WebRTCManager(WebSocketClient *signaling, QObject *parent = nullptr);
+    explicit WebRTCManager(WebSocketClient *signaling,MediaController* mediaController, QObject *parent = nullptr);
     ~WebRTCManager();
-
-
 
     bool isConnected() const { return m_connected; }
     bool isAudioEnabled() const { return m_audioEnabled; }
     bool isVideoEnabled() const { return m_videoEnabled; }
+    void onRoomCreated(const QString &roomId, const QJsonObject &roomInfo);
+    void onRoomJoined(const QString &roomId, const QJsonObject &roomInfo);
 
     // 媒体控制
     Q_INVOKABLE void startLocalMedia();
     Q_INVOKABLE void stopLocalMedia();
-    Q_INVOKABLE bool toggleAudio();
-    Q_INVOKABLE bool toggleVideo();
-
     // 连接管理
     Q_INVOKABLE void setupPeerConnection(bool isOfferer);
     Q_INVOKABLE void closePeerConnection();
@@ -59,12 +55,18 @@ private slots:
     void handleAnswer(const QString &fromId, const QString &sdp);
     void handleIceCandidate(const QString &fromId, const QString &candidate);
     void onvideoFrameReady(const QByteArray &data);
+    void onVideoFrameReady(const QByteArray &data);
+    void onVideoReceived(const QByteArray &data);
+    void onPeerJoined(const QString &peerId);
 private:
     void setupCallbacks();
     void createDataChannels();
     void setupDataChannelCallbacks(std::shared_ptr<rtc::DataChannel> dc, const std::string &label);
 
     WebSocketClient *m_signaling;
+    MediaController *m_mediaController;
+
+    //数据传输
     std::shared_ptr<rtc::PeerConnection> m_pc;
     std::shared_ptr<rtc::DataChannel> m_videoChannel;
     std::shared_ptr<rtc::DataChannel> m_audioChannel;
@@ -74,8 +76,10 @@ private:
     bool m_connected;
     bool m_audioEnabled;
     bool m_videoEnabled;
-    bool m_mediaStarted;
-    bool m_isOfferer;
+    bool m_mediaStarted=false;
+    bool m_isOfferer=false;
+    bool m_peerJoined;
+    bool m_dataChannelsReady;
 
     QString m_peerId;  // 对方的ID
 };

@@ -127,8 +127,9 @@ Page{
 
             TextField {
                 id: serveripFiled
-                placeholderText: "ws://localhost:9999"
-                placeholderTextColor: "#999999"
+                text: "ws://localhost:8080"
+                // placeholderText: "ws://localhost:9999"
+                // placeholderTextColor: "#999999"
                 font.pixelSize: 16
                 implicitWidth: 250
                 implicitHeight: 50
@@ -145,9 +146,9 @@ Page{
                 leftPadding: 15
                 rightPadding: 15
                 //验证器
-                validator: RegularExpressionValidator {
-                                   regularExpression: /^(ws:\/\/|wss:\/\/)[^\s]+$/
-                               }
+                // validator: RegularExpressionValidator {
+                //                    regularExpression: /^(ws:\/\/|wss:\/\/)[^\s]+$/
+                //                }
             }
 
             Button{

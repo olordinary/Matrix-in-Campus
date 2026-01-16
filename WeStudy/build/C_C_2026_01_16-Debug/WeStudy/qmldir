@@ -1,0 +1,8 @@
+module WeStudy
+typeinfo appWeStudy.qmltypes
+prefer :/qt/qml/WeStudy/
+Main 1.0 Main.qml
+CreateRoomPage 1.0 CreateRoomPage.qml
+LobbyPage 1.0 LobbyPage.qml
+StudyRoomPage 1.0 StudyRoomPage.qml
+

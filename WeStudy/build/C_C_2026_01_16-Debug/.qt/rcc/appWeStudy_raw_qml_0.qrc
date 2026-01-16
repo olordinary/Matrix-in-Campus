@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="/qt/qml/WeStudy/">
+    <file alias="Main.qml">/root/aaastudy/latest/WeStudy/WeStudy/Main.qml</file>
+    <file alias="CreateRoomPage.qml">/root/aaastudy/latest/WeStudy/WeStudy/CreateRoomPage.qml</file>
+    <file alias="LobbyPage.qml">/root/aaastudy/latest/WeStudy/WeStudy/LobbyPage.qml</file>
+    <file alias="StudyRoomPage.qml">/root/aaastudy/latest/WeStudy/WeStudy/StudyRoomPage.qml</file>
+  </qresource>
+</RCC>
+

@@ -1,0 +1,222 @@
+{
+    "classes": [
+        {
+            "className": "MediaController",
+            "lineNumber": 11,
+            "methods": [
+                {
+                    "access": "public",
+                    "index": 9,
+                    "name": "startCapture",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 10,
+                    "name": "stopCapture",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "width",
+                            "type": "int"
+                        },
+                        {
+                            "name": "height",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 11,
+                    "name": "setTargetResolution",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "fps",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 12,
+                    "name": "setTargetFps",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "quality",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 13,
+                    "name": "setQuality",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "data",
+                            "type": "QByteArray"
+                        }
+                    ],
+                    "index": 14,
+                    "name": "videoRecived",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "name": "videoSink",
+                    "notify": "videoSinkChanged",
+                    "read": "videoSink",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QVideoSink*",
+                    "user": false,
+                    "write": "setVideoSink"
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "name": "isCapturing",
+                    "notify": "isCapturingChanged",
+                    "read": "isCapturing",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "name": "remoteSink",
+                    "notify": "remoteSinkChanged",
+                    "read": "remoteSink",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QVideoSink*",
+                    "user": false,
+                    "write": "setRemoteSink"
+                }
+            ],
+            "qualifiedClassName": "MediaController",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "name": "videoSinkChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 1,
+                    "name": "isCapturingChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "index": 2,
+                    "name": "remoteSinkChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "data",
+                            "type": "QByteArray"
+                        }
+                    ],
+                    "index": 3,
+                    "name": "videoFrameReady",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "image",
+                            "type": "QImage"
+                        }
+                    ],
+                    "index": 4,
+                    "name": "rawFrameReady",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "fps",
+                            "type": "int"
+                        },
+                        {
+                            "name": "frameCount",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 5,
+                    "name": "statsUpdated",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "message",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 6,
+                    "name": "logMessage",
+                    "returnType": "void"
+                }
+            ],
+            "slots": [
+                {
+                    "access": "private",
+                    "arguments": [
+                        {
+                            "name": "frame",
+                            "type": "QVideoFrame"
+                        }
+                    ],
+                    "index": 7,
+                    "name": "onVideoFrameChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "private",
+                    "index": 8,
+                    "name": "updateStats",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "mediacontroller.h",
+    "outputRevision": 69
+}

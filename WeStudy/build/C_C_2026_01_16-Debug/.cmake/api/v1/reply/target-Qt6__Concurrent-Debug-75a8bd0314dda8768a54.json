@@ -1,0 +1,301 @@
+{
+	"abstract" : true,
+	"artifacts" : 
+	[
+		{
+			"path" : "/opt/Qt/6.9.1/gcc_64/lib/libQt6Concurrent.so.6.9.1"
+		}
+	],
+	"backtrace" : 40,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include",
+			"find_package",
+			"__find_dependency_common",
+			"find_dependency",
+			"_qt_internal_find_qt_dependencies",
+			"__qt_internal_include_qml_plugin_packages",
+			"set_target_properties"
+		],
+		"files" : 
+		[
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentTargets.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentConfig.cmake",
+			"/usr/share/cmake/Modules/CMakeFindDependencyMacro.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6ExamplesAssetDownloaderPrivate/Qt6ExamplesAssetDownloaderPrivateDependencies.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6ExamplesAssetDownloaderPrivate/Qt6ExamplesAssetDownloaderPrivateConfig.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6QmlAssetDownloader/Qt6QmlAssetDownloaderDependencies.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6QmlAssetDownloader/Qt6QmlAssetDownloaderConfig.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Qml/QmlPlugins/Qt6QmlAssetDownloaderpluginDependencies.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Qml/QmlPlugins/Qt6QmlAssetDownloaderpluginConfig.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6/QtPublicPluginHelpers.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Qml/Qt6QmlPlugins.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Qml/Qt6QmlConfig.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Quick/Qt6QuickDependencies.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6Quick/Qt6QuickConfig.cmake",
+			"/opt/Qt/6.9.1/gcc_64/lib/cmake/Qt6/Qt6Config.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 16
+			},
+			{
+				"command" : 2,
+				"file" : 16,
+				"line" : 11,
+				"parent" : 0
+			},
+			{
+				"file" : 15,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 15,
+				"line" : 218,
+				"parent" : 2
+			},
+			{
+				"file" : 14,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 14,
+				"line" : 43,
+				"parent" : 4
+			},
+			{
+				"file" : 13,
+				"parent" : 5
+			},
+			{
+				"command" : 5,
+				"file" : 13,
+				"line" : 45,
+				"parent" : 6
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 137,
+				"parent" : 7
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 125,
+				"parent" : 8
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 93,
+				"parent" : 9
+			},
+			{
+				"file" : 12,
+				"parent" : 10
+			},
+			{
+				"command" : 1,
+				"file" : 12,
+				"line" : 204,
+				"parent" : 11
+			},
+			{
+				"file" : 11,
+				"parent" : 12
+			},
+			{
+				"command" : 6,
+				"file" : 11,
+				"line" : 6,
+				"parent" : 13
+			},
+			{
+				"command" : 1,
+				"file" : 10,
+				"line" : 680,
+				"parent" : 14
+			},
+			{
+				"file" : 9,
+				"parent" : 15
+			},
+			{
+				"command" : 1,
+				"file" : 9,
+				"line" : 55,
+				"parent" : 16
+			},
+			{
+				"file" : 8,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 8,
+				"line" : 19,
+				"parent" : 18
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 137,
+				"parent" : 19
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 125,
+				"parent" : 20
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 93,
+				"parent" : 21
+			},
+			{
+				"file" : 7,
+				"parent" : 22
+			},
+			{
+				"command" : 1,
+				"file" : 7,
+				"line" : 43,
+				"parent" : 23
+			},
+			{
+				"file" : 6,
+				"parent" : 24
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 45,
+				"parent" : 25
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 137,
+				"parent" : 26
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 125,
+				"parent" : 27
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 93,
+				"parent" : 28
+			},
+			{
+				"file" : 5,
+				"parent" : 29
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 43,
+				"parent" : 30
+			},
+			{
+				"file" : 4,
+				"parent" : 31
+			},
+			{
+				"command" : 5,
+				"file" : 4,
+				"line" : 45,
+				"parent" : 32
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 137,
+				"parent" : 33
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 125,
+				"parent" : 34
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 93,
+				"parent" : 35
+			},
+			{
+				"file" : 1,
+				"parent" : 36
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 55,
+				"parent" : 37
+			},
+			{
+				"file" : 0,
+				"parent" : 38
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 59,
+				"parent" : 39
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 61,
+				"parent" : 39
+			}
+		]
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	},
+	"id" : "Qt6::Concurrent::@6890427a1f51a3e7e1df",
+	"imported" : true,
+	"interfaceCompileDependencies" : 
+	[
+		{
+			"backtrace" : 41,
+			"id" : "Qt6::Core::@6890427a1f51a3e7e1df"
+		}
+	],
+	"interfaceLinkLibraries" : 
+	[
+		{
+			"backtrace" : 41,
+			"id" : "Qt6::Core::@6890427a1f51a3e7e1df"
+		}
+	],
+	"local" : true,
+	"name" : "Qt6::Concurrent",
+	"nameOnDisk" : "libQt6Concurrent.so.6.9.1",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sources" : [],
+	"type" : "SHARED_LIBRARY"
+}

@@ -1,0 +1,14 @@
+-rootPath
+/root/aaastudy/latest/WeStudy/WeStudy
+-cmake-output
+-output-file
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug/.qt/qml_imports/appWeStudy_conf.cmake
+-importPath
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug/WeStudy
+-importPath
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug
+-importPath
+/opt/Qt/6.9.1/gcc_64/qml
+-qrcFiles
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug/.qt/rcc/qmake_WeStudy.qrc
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug/.qt/rcc/appWeStudy_raw_qml_0.qrc

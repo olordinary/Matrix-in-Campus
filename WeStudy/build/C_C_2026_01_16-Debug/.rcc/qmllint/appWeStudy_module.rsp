@@ -1,0 +1,10 @@
+-I
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug
+-I
+/opt/Qt/6.9.1/gcc_64/qml
+--resource
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug/.qt/rcc/qmake_WeStudy.qrc
+--resource
+/root/aaastudy/latest/WeStudy/WeStudy/build/C_C_2026_01_16-Debug/.qt/rcc/appWeStudy_raw_qml_0.qrc
+--module
+WeStudy

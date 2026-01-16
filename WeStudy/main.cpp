@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include "controller.h"
-#include "webrtcManager.h"
+#include "webrtcmanager.h"
 #include "websocketclient.h"
 #include "mediacontroller.h"
 

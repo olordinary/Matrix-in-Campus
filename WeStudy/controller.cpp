@@ -1,6 +1,6 @@
 #include "controller.h"
 #include "websocketclient.h"
-#include "webrtcManager.h"
+#include "webrtcmanager.h"
 #include <QJsonArray>
 #include <QJsonObject>
 #include<QDebug>

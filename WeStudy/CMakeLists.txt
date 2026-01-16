@@ -25,7 +25,7 @@ qt_add_qml_module(appWeStudy
         CreateRoomPage.qml
         LobbyPage.qml
         StudyRoomPage.qml
-        SOURCES webrtcManager.h webrtcManager.cpp
+        SOURCES webrtcmanager.h webrtcmanager.cpp
         SOURCES websocketclient.h websocketclient.cpp
         SOURCES controller.h controller.cpp
         SOURCES studyroom.h studyroom.cpp

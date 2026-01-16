@@ -1,6 +1,6 @@
 
 //实现rtc会话的管理，管理连接、信令、通道、状态，不负责采集和展示
-#include "webrtcManager.h"
+#include "webrtcmanager.h"
 #include "websocketclient.h"
 #include <QDebug>
 #include <QJsonObject>

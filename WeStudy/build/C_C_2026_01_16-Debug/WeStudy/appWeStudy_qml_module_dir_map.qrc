@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/qt/qml/WeStudy">/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/WeStudy</file>
+
+  </qresource>
+</RCC>

@@ -1,0 +1,8 @@
+--resource
+/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/.qt/rcc/qmake_WeStudy.qrc
+--resource
+/root/Matrix-in-Campus/WeStudy/build/C_C_2026_01_16-Debug/.qt/rcc/appWeStudy_raw_qml_0.qrc
+/qt/qml/WeStudy/Main.qml
+/qt/qml/WeStudy/CreateRoomPage.qml
+/qt/qml/WeStudy/LobbyPage.qml
+/qt/qml/WeStudy/StudyRoomPage.qml

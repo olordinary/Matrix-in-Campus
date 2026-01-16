@@ -62,66 +62,66 @@ Page {
                 color: "white"
             }
             
-            // Button {
+            Button {
 
-            //     text: controller.isStudying ? "结束自习" : "开始自习"
-            //     font.pixelSize: 14
-            //     implicitWidth: 100
-            //     implicitHeight: 35
+                text: controller.isStudying ? "结束自习" : "开始自习"
+                font.pixelSize: 14
+                implicitWidth: 100
+                implicitHeight: 35
                 
-            //     background:  Rectangle {
-            //         color: controller.isStudying ? "#e74c3c" : "#27ae60"
-            //         radius: 6
-            //     }
+                background:  Rectangle {
+                    color: controller.isStudying ? "#e74c3c" : "#27ae60"
+                    radius: 6
+                }
                 
-            //     contentItem: Text {
-            //         text: parent.text
-            //         font: parent.font
-            //         color: "white"
-            //         horizontalAlignment: Text.AlignHCenter
-            //         verticalAlignment: Text.AlignVCenter
-            //     }
+                contentItem: Text {
+                    text: parent.text
+                    font: parent.font
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
                 
-            //     onClicked: {
-            //         if (controller.isStudying) {
-            //             controller.stopStudying()
-            //         } else {
-            //             controller.startStudying()
-            //         }
-            //     }
+                onClicked: {
+                    if (controller.isStudying) {
+                        controller.stopStudying()
+                    } else {
+                        controller.startStudying()
+                    }
+                }
 
-            // }
+            }
             
-            // Button {
+            Button {
 
-            //     text:controller.isOwner ? "关闭自习室" : "离开自习室"
-            //     font.pixelSize: 14
-            //     implicitWidth: 120
-            //     implicitHeight: 35
+                text:controller.isOwner ? "关闭自习室" : "离开自习室"
+                font.pixelSize: 14
+                implicitWidth: 120
+                implicitHeight: 35
                 
-            //     background: Rectangle {
+                background: Rectangle {
 
-            //         color:"#e74c3c"
-            //         radius: 6
-            //     }
+                    color:"#e74c3c"
+                    radius: 6
+                }
                 
-            //     contentItem: Text {
-            //         text: parent.text
-            //         font: parent.font
-            //         color: "white"
-            //         horizontalAlignment: Text.AlignHCenter
-            //         verticalAlignment: Text.AlignVCenter
-            //     }
+                contentItem: Text {
+                    text: parent.text
+                    font: parent.font
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
                 
-            //     onClicked: {
-            //         if (controller.isOwner) {
-            //             closeRoomDialog.open()
-            //         } else {
-            //             root.leaveRoom()
-            //         }
-            //     }
+                onClicked: {
+                    if (controller.isOwner) {
+                        closeRoomDialog.open()
+                    } else {
+                        root.leaveRoom()
+                    }
+                }
 
-            // }
+            }
         }
     }
     
@@ -204,31 +204,7 @@ Page {
                                     RowLayout {
                                         spacing: 10
 
-                                        Rectangle {
-                                            width: 20
-                                            height: 20
-                                            radius: 10
-                                            color: model.audioEnabled ? "#27ae60" : "#e74c3c"
 
-                                            Label {
-                                                anchors.centerIn: parent
-                                                text: "🎤"
-                                                font.pixelSize: 10
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            width: 20
-                                            height: 20
-                                            radius: 10
-                                            color: model.videoEnabled ? "#27ae60" : "#e74c3c"
-
-                                            Label {
-                                                anchors.centerIn: parent
-                                                text: "📹"
-                                                font.pixelSize: 10
-                                            }
-                                        }
 
                                         Label {
                                             text: model.isStudying ? "学习中" : "休息中"
@@ -287,28 +263,7 @@ Page {
                     color: "#34495e"
                     visible: controller.isOwner
 
-                    // Button {
-                    //     anchors.centerIn: parent
-                    //     text: "全体静音"
-                    //     font.pixelSize: 14
-                    //     implicitWidth: 200
-                    //     implicitHeight: 40
 
-                    //     background: Rectangle {
-                    //         color: parent.down ? "#c0392b" : "#e74c3c"
-                    //         radius: 6
-                    //     }
-
-                    //     contentItem: Text {
-                    //         text: parent.text
-                    //         font: parent.font
-                    //         color: "white"
-                    //         horizontalAlignment: Text.AlignHCenter
-                    //         verticalAlignment: Text.AlignVCenter
-                    //     }
-
-                    //     onClicked: muteAllDialog.open()
-                    // }
                 }
             }
         }
@@ -398,23 +353,7 @@ Page {
 
                         }
 
-                        // // 远程占位提示
-                        // ColumnLayout {
-                        //     anchors.centerIn: parent
-                        //     visible: !remoteVideoOutput.videoSink || !remoteVideoOutput.videoSink.videoFrame
-                        //     spacing: 10
-                        //     Label {
-                        //         text: "⌛"
-                        //         font.pixelSize: 40
-                        //         Layout.alignment: Qt.AlignHCenter
-                        //     }
-                        //     Label {
-                        //         text: "等待对方加入..."
-                        //         color: "#95a5a6"
-                        //         font.pixelSize: 14
-                        //         Layout.alignment: Qt.AlignHCenter
-                        //     }
-                        // }
+
 
                         // 浮动标签
                         Rectangle {
@@ -435,65 +374,7 @@ Page {
                 }
             }
 
-                // --- 控制栏区域 ---
-                // Rectangle {
-                //     Layout.fillWidth: true
-                //     Layout.preferredHeight: 100
-                //     color: "#34495e"
-                //     radius: 15
 
-                //     RowLayout {
-                //         anchors.centerIn: parent
-                //         spacing: 40
-
-                //         // 麦克风按钮
-                //         Button {
-                //             id: micBtn
-                //             property bool isMuted: false
-                //             implicitWidth: 64; implicitHeight: 64
-
-                //             contentItem: Text {
-                //                 text: micBtn.isMuted ? "🔇" : "🎤"
-                //                 font.pixelSize: 28
-                //                 horizontalAlignment: Text.AlignHCenter
-                //                 verticalAlignment: Text.AlignVCenter
-                //             }
-
-                //             background: Rectangle {
-                //                 color: micBtn.isMuted ? "#e74c3c" : "#27ae60"
-                //                 radius: 32
-                //                 // 简单的点击缩放效果
-                //                 scale: micBtn.pressed ? 0.9 : 1.0
-                //                 Behavior on color { ColorAnimation { duration: 200 } }
-                //             }
-
-                //             onClicked: isMuted = !isMuted
-                //         }
-
-                //         // 摄像头按钮
-                //         Button {
-                //             id: camBtn
-                //             property bool isOff: false
-                //             implicitWidth: 64; implicitHeight: 64
-
-                //             contentItem: Text {
-                //                 text: camBtn.isOff ? "❌" : "📹"
-                //                 font.pixelSize: 28
-                //                 horizontalAlignment: Text.AlignHCenter
-                //                 verticalAlignment: Text.AlignVCenter
-                //             }
-
-                //             background: Rectangle {
-                //                 color: camBtn.isOff ? "#e74c3c" : "#2980b9"
-                //                 radius: 32
-                //                 scale: camBtn.pressed ? 0.9 : 1.0
-                //                 Behavior on color { ColorAnimation { duration: 200 } }
-                //             }
-
-                //             onClicked: isOff = !isOff
-                //         }
-                //     }
-                // }
         }
 
     

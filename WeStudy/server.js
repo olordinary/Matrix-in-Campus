@@ -87,11 +87,10 @@ wss.on('connection', (ws) => {
                 case 'closeRoom':
                     handleCloseRoom(message, userId);
                     break;
-                    
-                case 'getRoomList':
-                    handleGetRoomList(userId);
+                case 'searchRoom':
+                    handleSearchRoom(message,userId);
                     break;
-                    
+
                 case 'muteParticipant':
                 case 'stopParticipantVideo':
                 case 'kickParticipant':
@@ -136,10 +135,29 @@ wss.on('connection', (ws) => {
     });
     
     function handleCreateRoom(message, userId) {
+        const proposedName = (message.roomName || "").trim();
+        if (!proposedName) {
+            sendToClient(userId, {
+                type: 'error',
+                message: '自习室名称不能为空'
+            });
+            return;
+        }
+
+        // 房间名称唯一（全局唯一），避免大厅按名称搜索时出现歧义
+        for (const [, existingRoom] of rooms) {
+            if (existingRoom && existingRoom.isActive && existingRoom.roomName === proposedName) {
+                sendToClient(userId, {
+                    type: 'error',
+                    message: '自习室名称已存在，请更换一个名称'
+                });
+                return;
+            }
+        }
         const roomId = generateId();
         const room = {
             roomId: roomId,
-            roomName: message.roomName,
+            roomName: proposedName,
             ownerId: userId,
             maxParticipants: message.maxParticipants,
             isPrivate: message.isPrivate,
@@ -258,15 +276,29 @@ wss.on('connection', (ws) => {
         broadcastRoomList();
         console.log('自习室关闭:', roomId);
     }
-    
-    function handleGetRoomList(userId) {
 
-        sendToClient(userId, {
-            type: 'roomList',
-            rooms:buildPublicRoomList()
-        });
+    function handleSearchRoom(message, userId) {
+        const q = (message.roomName || "").trim();
+        const result = [];
+        if (q) {
+            for (const [roomId, room] of rooms) {
+                if (room && room.isActive && room.roomName === q) {
+                    result.push({
+                        roomId: roomId,
+                        roomName: room.roomName,
+                        currentParticipants: room.participants.size,
+                        maxParticipants: room.maxParticipants,
+                        isPrivate: room.isPrivate
+                    });
+                    break;
+                }
+            }
+        }
+        sendToClient(userId ,{
+            type:'searchResult',
+            rooms:result
+        })
     }
-    
     function handleRoomManagement(message, userId) {
         // 转发管理命令到房间内的其他参与者
         const roomId = message.roomId;

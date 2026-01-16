@@ -31,9 +31,9 @@ public:
 
 
     Q_INVOKABLE void createRoom(const QString &roomName, int maxParticipants,bool isPrivate,bool videoStatus,bool audioStatus,const QString &password=" ");
-    Q_INVOKABLE void getRoomList();//请求得到房间列表，展示到大厅，里面有很多房间信息，有对应的响应的操作
-    Q_INVOKABLE void joinRoom(const QString &roomId, const QString &password = "");
 
+    Q_INVOKABLE void joinRoom(const QString &roomId, const QString &password = "");
+    Q_INVOKABLE void searchRoom(const QString &roomName);
 
 signals:
     void connectedChanged();
@@ -50,6 +50,7 @@ signals:
     void roomLeft();
     void roomClosed();
     void roomListReceived(const QJsonArray &rooms);//得到房间列表，直接到MlistView里面处理
+    void searchResultReceived(const QJsonArray &rooms);
     void participantJoined(const QJsonObject &participant);
     //void participantLeft(const QString &participantId);
 

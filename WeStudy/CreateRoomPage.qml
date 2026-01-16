@@ -6,7 +6,14 @@ Page {
     id: root
     
     signal back()
-    
+
+    property var existingRoomNameMap: ({})
+
+    function isDuplicateRoomName(name) {
+        const n = (name || "").trim()
+        if (n === "") return false
+        return existingRoomNameMap[n] === true
+    }
     header: ToolBar {
         background: Rectangle {
             color: "#3498db"
@@ -88,9 +95,9 @@ Page {
                     }
                     
                     Label {
-                        text: "自习室名称不能为空且不能与已有自习室重复"
+                        text: root.isDuplicateRoomName(roomNameField.text) ? "名称已存在，请更换一个名称" : "自习室名称不能为空且不能与已有自习室重复"
                         font.pixelSize: 12
-                        color: "#7f8c8d"
+                        color: root.isDuplicateRoomName(roomNameField.text) ? "#e74c3c" : "#7f8c8d"
                     }
                 }
             }
@@ -266,7 +273,7 @@ Page {
                     font.pixelSize: 16
                     Layout.fillWidth: true
                     implicitHeight: 50
-                    enabled: roomNameField.text.trim() !== ""
+                    enabled: roomNameField.text.trim() !== ""&&!root.isDuplicateRoomName(roomNameField.text)
                     
                     background: Rectangle {
                         color: parent.enabled ? (parent.down ? "#27ae60" : "#2ecc71") : "#95a5a6"
@@ -296,6 +303,19 @@ Page {
             }
             
             Item { height: 40 }
+        }
+    }
+    Connections {
+        target: wsClient
+        function onRoomListReceived(rooms) {
+            const m = ({})
+            for (let i = 0; i < rooms.length; ++i) {
+                const r = rooms[i]
+                if (r && r.roomName) {
+                    m[r.roomName] = true
+                }
+            }
+            root.existingRoomNameMap = m
         }
     }
 }

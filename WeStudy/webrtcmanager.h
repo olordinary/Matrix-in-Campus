@@ -54,7 +54,6 @@ private slots:
     void handleOffer(const QString &fromId, const QString &sdp);
     void handleAnswer(const QString &fromId, const QString &sdp);
     void handleIceCandidate(const QString &fromId, const QString &candidate);
-    void onvideoFrameReady(const QByteArray &data);
     void onVideoFrameReady(const QByteArray &data);
     void onVideoReceived(const QByteArray &data);
     void onPeerJoined(const QString &peerId);

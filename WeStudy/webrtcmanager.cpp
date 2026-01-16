@@ -418,15 +418,6 @@ void WebRTCManager::handleIceCandidate(const QString &fromId, const QString &can
     }
 }
 
-void WebRTCManager::onvideoFrameReady(const QByteArray &data)
-{
-    sendVideo(data);
-}
-
-
-
-
-
 
 void WebRTCManager::sendVideo(const QByteArray &data)
 {

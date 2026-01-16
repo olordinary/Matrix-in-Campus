@@ -5,8 +5,38 @@ import QtQuick.Layouts
 Page{
     id:lobby
     signal createRoom()
-    signal joinRoom(string roomId)
+    signal joinRoom(string roomId,string password)
+    // 默认展示的是完整房间列表,点搜索后才切换为仅展示匹配项
+    property bool searchActive: false
+    property string searchQuery: ""
+    property string pendingJoinRoomId:""
+    function applyRoomSearcher() {
+        roomListModel.clear()
 
+        if (!searchActive) {
+            for (let i = 0; i < allRoomsModel.count; i++) {
+                roomListModel.append(allRoomsModel.get(i))
+            }
+            noMatchHint.visible = false
+            return
+        }
+
+        const q = searchQuery
+        if (q === "") {
+            searchActive = false
+            for (let i = 0; i < allRoomsModel.count; i++) {
+                roomListModel.append(allRoomsModel.get(i))
+            }
+            noMatchHint.visible = false
+            return
+        }
+
+
+        for (let i = 0; i < searchRoomsModel.count; i++) {
+            roomListModel.append(searchRoomsModel.get(i))
+        }
+        noMatchHint.visible = (roomListModel.count === 0)
+    }
     header:ToolBar{
         background:Rectangle{
             color:"#3498db"
@@ -185,10 +215,22 @@ Page{
                             // 搜索输入框
                             TextField {
                                 id: searchField2
-                                placeholderText: "请输入自习室ID....."
-                                placeholderTextColor: "#999999"  // 提示文本颜色
+                                placeholderText: "请输入自习室名称....."
+                                placeholderTextColor: "#999999"
                                 font.pixelSize: 14
                                 implicitWidth: 250
+                                onAccepted: {
+                                    lobby.searchQuery = searchField2.text.trim()
+                                    lobby.searchActive = (lobby.searchQuery !== "")
+                                    if (!lobby.searchActive) {
+                                        lobby.applyRoomSearcher()
+                                    } else {
+                                        searchRoomsModel.clear()
+                                        roomListModel.clear()
+                                        noMatchHint.visible = false
+                                        wsClient.searchRoom(lobby.searchQuery)
+                                    }
+                                }
                                 background: Rectangle {
                                     implicitHeight: 40
                                     radius: 20
@@ -207,6 +249,19 @@ Page{
                                 font.bold: true
                                 implicitWidth: 100
                                 implicitHeight: 40
+                                onClicked: {
+                                    lobby.searchQuery = searchField2.text.trim()
+                                    lobby.searchActive = (lobby.searchQuery !== "")
+                                    if (!lobby.searchActive) {
+                                        lobby.applyRoomSearcher()
+                                    } else {
+                                        searchRoomsModel.clear()
+                                        roomListModel.clear()
+                                        noMatchHint.visible = false
+                                        wsClient.searchRoom(lobby.searchQuery)
+                                    }
+                                }
+
 
                                 background: Rectangle {
                                     radius: 8
@@ -222,14 +277,24 @@ Page{
                                 }
                             }
                         }
+                ListModel { id: allRoomsModel }
+                ListModel { id: roomListModel }
+                ListModel{id:searchRoomsModel}
 
+                Label {
+                    id: noMatchHint
+                    visible: false
+                    text: "未找到匹配的自习室"
+                    color: "#e74c3c"
+                    font.pixelSize: 14
+                }
                 Connections {
                     target: wsClient
                     function onRoomListReceived(rooms) {
-                        roomListModel.clear()
+                        allRoomsModel.clear()
                         for (let i = 0; i < rooms.length; ++i) {
                             const room = rooms[i]
-                            roomListModel.append({
+                            allRoomsModel.append({
                                 roomId: room.roomId,
                                 roomName: room.roomName,
                                 currentParticipants: room.currentParticipants,
@@ -237,6 +302,21 @@ Page{
                                 isPrivate: room.isPrivate
                             })
                         }
+                        lobby.applyRoomSearcher()
+                    }
+                    function onSearchResultReceived(rooms) {
+                        searchRoomsModel.clear()
+                        for (let i = 0; i < rooms.length; ++i) {
+                            const room = rooms[i]
+                            searchRoomsModel.append({
+                                roomId: room.roomId,
+                                roomName: room.roomName,
+                                currentParticipants: room.currentParticipants,
+                                maxParticipants: room.maxParticipants,
+                                isPrivate: room.isPrivate
+                            })
+                        }
+                        lobby.applyRoomSearcher()
                     }
                 }
                 Component.onCompleted: {
@@ -249,9 +329,8 @@ Page{
 
                     ListView {
                         id: roomListView
-                        model: ListModel {
-                            id: roomListModel
-                        }
+                        model:roomListModel
+
 
                         spacing: 10
 
@@ -333,7 +412,15 @@ Page{
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
                                     }
-                                onClicked: lobby.joinRoom(model.roomId)
+                                    onClicked: {
+                                        if (model.isPrivate) {
+                                            lobby.pendingJoinRoomId = model.roomId
+                                            passwordField.text = ""
+                                            passwordDialog.open()
+                                        } else {
+                                            lobby.joinRoom(model.roomId, "")
+                                        }
+                                    }
 
                                 }
                             }
@@ -344,6 +431,30 @@ Page{
 
         }
 
+        Dialog {
+            id: passwordDialog
+            title: "加入私密自习室"
+            modal: true
+            anchors.centerIn: parent
+            standardButtons: Dialog.Ok | Dialog.Cancel
+
+            ColumnLayout {
+                width: 75
+                spacing: 10
+                Label { text: "请输入密码：" }
+                TextField {
+                    id: passwordField
+                    Layout.fillWidth: true
+
+                    echoMode: TextInput.Password
+                    placeholderText: "密码"
+                }
+            }
+
+            onAccepted: {
+                lobby.joinRoom(lobby.pendingJoinRoomId, passwordField.text)
+            }
+        }
 
     }
     function connectToServer() {

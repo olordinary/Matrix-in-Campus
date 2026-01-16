@@ -76,11 +76,6 @@ void WebSocketClient::createRoom(const QString &roomName,
     sendMessage(message);
 }
 
-void WebSocketClient::getRoomList()
-{
-    QJsonObject message = createMessage("getRoomList");
-    sendMessage(message);
-}
 
 void WebSocketClient::joinRoom(const QString &roomId, const QString &password)
 {
@@ -92,7 +87,12 @@ void WebSocketClient::joinRoom(const QString &roomId, const QString &password)
     m_currentRoomId = roomId;
     sendMessage(message);
 }
-
+void WebSocketClient::searchRoom(const QString &roomName)
+{
+    QJsonObject message = createMessage("searchRoom");
+    message["roomName"] = roomName;
+    sendMessage(message);
+}
 void WebSocketClient::sendOffer(const QString &targetId, const QString &sdp)
 {
     QJsonObject message = createMessage("webrtcOffer");
@@ -187,6 +187,9 @@ void WebSocketClient::handleMessage(const QJsonObject &message)
     } else if (type == "roomList") {
         QJsonArray rooms = message["rooms"].toArray();
         emit roomListReceived(rooms);
+    } else if (type == "searchResult") {
+        QJsonArray rooms = message["rooms"].toArray();
+        emit searchResultReceived(rooms);
     } else if (type == "participantJoined") {
         QJsonObject participant = message["participant"].toObject();
         emit participantJoined(participant);

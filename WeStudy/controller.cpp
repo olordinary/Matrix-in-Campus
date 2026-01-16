@@ -16,6 +16,8 @@ Controller::Controller(WebSocketClient *client, WebRTCManager *webrtc, QObject *
             this, &Controller::handleRoomJoined);
     connect(m_client, &WebSocketClient::participantJoined,
             this, &Controller::handleParticipantJoined);
+    connect(m_client, &WebSocketClient::errorOccurred,
+            this, &Controller::errorOccurred);
 
 }
 

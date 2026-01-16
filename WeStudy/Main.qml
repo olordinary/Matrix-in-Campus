@@ -26,8 +26,8 @@ ApplicationWindow {
             onCreateRoom: {
                 stackView.push(createRoomPage)
             }
-            onJoinRoom: function(roomId) {
-               controller.joinRoom(roomId, "")//房间控制器对象来实现
+            onJoinRoom: function(roomId,password) {
+               controller.joinRoom(roomId, password)//房间控制器对象来实现
             }
 
         }
